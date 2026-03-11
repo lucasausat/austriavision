@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AUSTRIAVISION // ADVANCED PROTOCOL</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+    <title>AUSTRIAVISION // EXTENDED PROTOCOL V3.5</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@300&display=swap" rel="stylesheet">
     <style>
         :root {
-            --at-red: #ed2939; 
-            --deep-black: #050505;
-            --glass: rgba(255, 255, 255, 0.03);
-            --line: rgba(255, 255, 255, 0.08);
-            --accent-glow: rgba(237, 41, 57, 0.15);
+            --at-red: #ff0015; 
+            --at-red-glow: rgba(255, 0, 21, 0.4);
+            --led-blue: #00f2ff;
+            --deep-black: #020202;
+            --panel-bg: rgba(15, 15, 15, 0.9);
+            --border-glow: 0 0 20px var(--at-red-glow);
+            --text-gray: #a0a0a0;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
@@ -22,267 +24,300 @@
             color: #ffffff;
             overflow-x: hidden;
             background-image: 
-                radial-gradient(circle at 50% 0%, #1a0505 0%, var(--deep-black) 75%),
-                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 100%, 100% 4px, 100% 100%; /* CRT Scanline Effekt */
+                radial-gradient(circle at 50% 50%, #1a0505 0%, var(--deep-black) 80%),
+                linear-gradient(var(--at-red-glow) 1px, transparent 1px),
+                linear-gradient(90deg, var(--at-red-glow) 1px, transparent 1px);
+            background-size: 100% 100%, 60px 60px, 60px 60px;
             background-attachment: fixed;
         }
 
-        /* CUSTOM CURSOR */
-        #c-main { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99999; }
-        .c-point { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .c-trail {
-            position: absolute; width: 30px; height: 18px;
-            display: flex; flex-direction: column;
-            border: 1px solid rgba(255,255,255,0.3);
-            transform: translate(-50%, -50%);
-            backdrop-filter: invert(0.1);
+        /* SCANLINE & NOISE OVERLAY */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px;
+            z-index: 9999; pointer-events: none; opacity: 0.3;
         }
-        .tr-r { background: var(--at-red); flex: 1; opacity: 0.8; }
-        .tr-w { background: #fff; flex: 1; opacity: 0.8; }
 
-        /* NAV */
+        /* CUSTOM CURSOR */
+        #c-main { position: fixed; pointer-events: none; z-index: 100000; mix-blend-mode: screen; }
+        .c-point { width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 20px var(--at-red); position: absolute; transform: translate(-50%, -50%); }
+        .c-cross { 
+            position: absolute; width: 50px; height: 50px; 
+            border: 1px solid var(--at-red); border-radius: 2px;
+            transform: translate(-50%, -50%) rotate(45deg); transition: 0.08s ease-out;
+        }
+
+        /* HUD NAVIGATION */
         nav {
             position: fixed; top: 0; width: 100%; height: 70px;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 4%; z-index: 1000;
-            border-bottom: 1px solid var(--line);
-            background: rgba(2, 2, 2, 0.7); backdrop-filter: blur(20px);
+            padding: 0 4%; z-index: 5000;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--at-red);
+            box-shadow: 0 5px 30px rgba(255,0,0,0.2);
         }
-        .brand { font-size: 0.8rem; font-weight: 900; letter-spacing: 0.5em; }
-        .brand span { color: var(--at-red); text-shadow: 0 0 15px var(--at-red); }
-        .nav-links a {
-            font-size: 0.6rem; color: rgba(255,255,255,0.4); text-decoration: none;
-            margin-left: 35px; letter-spacing: 3px; transition: 0.3s;
-            text-transform: uppercase;
-        }
-        .nav-links a:hover { color: #fff; text-shadow: 0 0 10px #fff; }
+        .brand { font-family: 'Orbitron'; font-weight: 900; letter-spacing: 8px; font-size: 1.2rem; }
+        .brand span { color: var(--at-red); text-shadow: 0 0 10px var(--at-red); }
 
-        /* HERO AREA */
+        .sys-info { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--at-red); text-align: right; }
+
+        /* HERO HEADER */
         header {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            flex-direction: column; overflow: hidden;
+            height: 110vh; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center;
+            text-align: center; position: relative;
         }
-        .glitch-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(5rem, 18vw, 15rem);
-            line-height: 0.8; text-align: center;
-            background: linear-gradient(to bottom, #fff 30%, rgba(255,255,255,0.2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: relative;
+        .glitch-wrapper { position: relative; }
+        .main-title {
+            font-family: 'Orbitron'; font-size: 15vw; font-weight: 900;
+            line-height: 0.8; letter-spacing: -10px;
+            background: linear-gradient(to bottom, #fff, #333);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px var(--at-red-glow));
         }
-        .hero-sub {
-            margin-top: 40px; font-size: 0.65rem; letter-spacing: 1.5em;
-            color: var(--at-red); font-weight: 900; opacity: 0.8;
-        }
-
-        /* PORTAL CARDS */
-        .portal-wrap { padding: 100px 6%; }
-        .grid-3d { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
-            gap: 60px; 
+        .hero-stats {
+            margin-top: 30px; font-family: 'JetBrains Mono'; color: var(--at-red);
+            letter-spacing: 5px; font-size: 0.9rem; text-transform: uppercase;
         }
 
-        .item-3d {
-            height: 550px;
-            position: relative;
-            perspective: 1000px;
-            cursor: pointer;
+        /* SECTIONS */
+        .section-label {
+            padding: 100px 5% 20px 5%; font-family: 'Orbitron';
+            font-size: 0.8rem; color: var(--at-red); letter-spacing: 10px;
+            display: flex; align-items: center; gap: 20px;
+        }
+        .section-label::after { content: ""; height: 1px; flex: 1; background: var(--at-red); opacity: 0.3; }
+
+        /* DISTRICT GRID */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px; padding: 40px 5% 100px 5%;
         }
 
-        .card-inner {
-            width: 100%; height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            background: var(--glass);
-            border: 1px solid var(--line);
-            transition: transform 0.1s ease-out;
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 40px; position: relative; transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
             overflow: hidden;
         }
+        .card:hover {
+            border-color: var(--at-red);
+            transform: translateY(-15px);
+            box-shadow: 0 20px 50px rgba(255,0,0,0.1);
+        }
+        .card::before {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--at-red), transparent);
+            transform: translateX(-100%); transition: 0.6s;
+        }
+        .card:hover::before { transform: translateX(100%); }
 
-        .card-inner::before { /* Reflection Glare */
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(circle at var(--px) var(--py), rgba(255,255,255,0.15) 0%, transparent 60%);
-            z-index: 5; pointer-events: none;
+        .card-id { font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--at-red); margin-bottom: 20px; display: block; }
+        .card h2 { font-family: 'Orbitron'; font-size: 2.2rem; margin-bottom: 20px; letter-spacing: 2px; }
+        .card p { font-size: 0.9rem; color: var(--text-gray); line-height: 1.8; margin-bottom: 20px; }
+
+        .led-tag {
+            display: inline-block; padding: 4px 10px; border: 1px solid var(--at-red);
+            font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--at-red);
+            text-transform: uppercase; margin-right: 10px;
         }
 
-        .item-3d img {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%;
-            object-fit: cover; opacity: 0.25;
-            filter: grayscale(1) contrast(1.2);
-            transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        /* DATA SECTION */
+        .data-visual {
+            padding: 100px 5%; background: rgba(255,0,0,0.02);
+            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px;
         }
-
-        .item-3d:hover img { opacity: 0.5; filter: grayscale(0.5) contrast(1); transform: scale(1.1); }
-
-        .content-box {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            padding: 40px; transform: translateZ(60px);
-            z-index: 10;
+        .data-box {
+            border: 1px solid #222; padding: 30px; text-align: center;
         }
-
-        .content-box h3 { 
-            font-family: 'Playfair Display'; font-size: 3.5rem; 
-            line-height: 1; margin-bottom: 15px; 
-            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        .loc-id {
-            display: block; color: var(--at-red);
-            font-weight: 900; font-size: 0.7rem;
-            letter-spacing: 5px; margin-bottom: 10px;
-        }
+        .data-num { font-family: 'Orbitron'; font-size: 3.5rem; display: block; color: #fff; text-shadow: 0 0 15px var(--at-red); }
+        .data-label { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--at-red); letter-spacing: 3px; }
 
         /* FOOTER */
-        footer { 
-            padding: 100px 4%; 
-            display: flex; justify-content: space-between;
-            border-top: 1px solid var(--line); 
-            font-size: 0.55rem; letter-spacing: 4px; color: rgba(255,255,255,0.2); 
+        footer {
+            padding: 80px 5%; border-top: 1px solid #111;
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: 'JetBrains Mono'; font-size: 0.6rem; color: #444;
         }
 
         @media (max-width: 768px) {
-            .grid-3d { grid-template-columns: 1fr; }
-            .glitch-title { font-size: 5rem; }
+            .main-title { font-size: 20vw; }
+            .grid-container { grid-template-columns: 1fr; }
+            .data-visual { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
+<div class="overlay"></div>
+
 <div id="c-main">
-    <div class="c-point" id="dot"></div>
-    <div class="c-trail" id="trail">
-        <div class="tr-r"></div>
-        <div class="tr-w"></div>
-        <div class="tr-r"></div>
-    </div>
+    <div class="c-point"></div>
+    <div class="c-cross" id="cross"></div>
 </div>
 
 <nav>
     <div class="brand">AUSTRIA<span>VISION</span></div>
-    <div class="nav-links">
-        <a href="#portal">Database</a>
-        <a href="#">Chronik</a>
-        <a href="#" style="color:var(--at-red)">Secure_Login</a>
+    <div class="sys-info">
+        CORE_LOAD: 94% | UPTIME: 244:12:09<br>
+        <span id="live-clock">00:00:00</span>
     </div>
 </nav>
 
 <header>
-    <h1 class="glitch-title" id="main-title">ÖSTER<br>REICH</h1>
-    <div class="hero-sub">PROTOCOL ACTIVE // 48.2082° N, 16.3738° E</div>
+    <div class="glitch-wrapper">
+        <h1 class="main-title">ÖSTER<br>REICH</h1>
+    </div>
+    <div class="hero-stats">Terminal Access // Protocol 3.5 // 2026-ACTIVE</div>
+    <div style="margin-top: 50px; width: 1px; height: 100px; background: linear-gradient(to bottom, var(--at-red), transparent);"></div>
 </header>
 
-<section class="portal-wrap" id="portal">
-    <div class="grid-3d">
-        <div class="item-3d">
-            <div class="card-inner">
-                <img src="https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=1200">
-                <div class="content-box">
-                    <span class="loc-id">LOC_01 / CAP</span>
-                    <h3>WIEN</h3>
-                    <p style="opacity:0.5; font-size:0.75rem; max-width:250px;">Zentralarchiv für imperiale Geschichte und digitale Urbanität.</p>
-                </div>
-            </div>
-        </div>
+<div class="section-label">REGIONALE_DATEN_KNOTEN</div>
 
-        <div class="item-3d">
-            <div class="card-inner">
-                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200">
-                <div class="content-box">
-                    <span class="loc-id">LOC_02 / ALP</span>
-                    <h3>TIROL</h3>
-                    <p style="opacity:0.5; font-size:0.75rem; max-width:250px;">Hochalpine Verteidigungssysteme und Naturschutz-Protokoll.</p>
-                </div>
-            </div>
-        </div>
+<section class="grid-container">
+    <div class="card">
+        <span class="card-id">NODE_01 // SEC_CAP</span>
+        <h2>WIEN</h2>
+        <div class="led-tag">Imperial Core</div><div class="led-tag">Data Hub</div>
+        <p>Das primäre Betriebssystem der Republik. In Wien kreuzen sich alle transkontinentalen Glasfaserkabel und historischen Zeitlinien. Verwaltung der Sektoren 1-23 unter striktem Cyber-Protokoll.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: VIBRANT / HIGH_TRAFFIC</div>
+    </div>
 
-        <div class="item-3d">
-            <div class="card-inner">
-                <img src="https://images.unsplash.com/photo-1597605051189-9892580a6519?auto=format&fit=crop&w=1200">
-                <div class="content-box">
-                    <span class="loc-id">LOC_03 / ART</span>
-                    <h3>SALZBURG</h3>
-                    <p style="opacity:0.5; font-size:0.75rem; max-width:250px;">Akustische Signalverarbeitung und klassische Resonanz.</p>
-                </div>
-            </div>
-        </div>
+    <div class="card">
+        <span class="card-id">NODE_02 // AGRI_NET</span>
+        <h2>NÖ</h2>
+        <div class="led-tag">Surrounding Grid</div>
+        <p>Der größte Flächensektor. Fungiert als biologischer Speicher und primärer Energielieferant. Die Donau-Pipeline sichert den konstanten Daten- und Güterfluss zwischen den Ost-West-Knoten.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: STABLE / RESOURCE_SYNC</div>
+    </div>
+
+    <div class="card">
+        <span class="card-id">NODE_03 // INDUSTRY</span>
+        <h2>OÖ</h2>
+        <div class="led-tag">Steel Forge</div><div class="led-tag">Tech Core</div>
+        <p>Das industrielle Herz. Hier wird der digitale Stahl geschmiedet. Hochpräzise Fertigungsalgorithmen steuern die Export-Matrix. Fokus auf Robotik und schwere Hardware-Entwicklung.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: ACTIVE / HIGH_OUTPUT</div>
+    </div>
+
+    <div class="card">
+        <span class="card-id">NODE_04 // AUDIO_SYS</span>
+        <h2>SALZBURG</h2>
+        <div class="led-tag">Soundscape</div><div class="led-tag">Citadel</div>
+        <p>Akustische Signalverarbeitung auf höchstem Niveau. Die Festung fungiert als massiver Firewall-Knotenpunkt. Kulturelle Frequenzen werden hier global synchronisiert.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: HARMONIC / SECURE</div>
+    </div>
+
+    <div class="card">
+        <span class="card-id">NODE_05 // BIO_PROCESS</span>
+        <h2>STMK</h2>
+        <div class="led-tag">Green Engine</div>
+        <p>Forschungszentrum für regenerative Systeme. Der "Grüne Algorithmus" optimiert die Symbiose zwischen Wald-Matrix und urbaner Expansion. Wichtiger Knoten für Automotive-Intelligence.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: OPTIMIZING / GREEN_SYNC</div>
+    </div>
+
+    <div class="card">
+        <span class="card-id">NODE_06 // ALPINE_SHIELD</span>
+        <h2>TIROL</h2>
+        <div class="led-tag">High Altitude</div>
+        <p>Vertikale Verteidigungs-Strukturen. Überwachung der alpinen Wetter-Pattern und Schutz der kryogenen Wasserspeicher. Das Herz der Tourismus-Simulation.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: FROZEN / STABLE</div>
+    </div>
+
+    <div class="card">
+        <span class="card-id">NODE_07 // AQUA_DATA</span>
+        <h2>KÄRNTEN</h2>
+        <div class="led-tag">Liquid Grid</div>
+        <p>Verwaltung der südlichen Beckenstrukturen. Fokus auf hydro-elektrische Energie und grenzüberschreitende Daten-Relais in den Adria-Sektor.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: FLOWING / COOLING</div>
+    </div>
+
+    <div class="card">
+        <span class="card-id">NODE_08 // MICRO_CHIP</span>
+        <h2>VBG</h2>
+        <div class="led-tag">Precision</div><div class="led-tag">Gateway</div>
+        <p>Hochspezialisierte Micro-Engineering-Cluster. Kleinste Bauweise bei maximaler Effizienz. Schnittstelle zum globalen High-Tech-Sektor West.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: CONNECTED / PRECISE</div>
+    </div>
+
+    <div class="card">
+        <span class="card-id">NODE_09 // WIND_POWER</span>
+        <h2>BGLD</h2>
+        <div class="led-tag">Solar Flux</div><div class="led-tag">Wind Grid</div>
+        <p>Das solare Kraftwerk der Republik. Weite Ebenen optimiert für Wind-Ernte und photonische Konvertierung. Pannonische Daten-Ebene aktiv.</p>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: RADIANT / ENERGY_MAX</div>
+    </div>
+</section>
+
+<div class="section-label">SYSTEM_METRIKEN</div>
+
+<section class="data-visual">
+    <div class="data-box">
+        <span class="data-num">8.95M</span>
+        <span class="data-label">VERNETZTE_BÜRGER</span>
+    </div>
+    <div class="data-box">
+        <span class="data-num">2.6k</span>
+        <span class="data-label">GIGAWATT_PEAK</span>
+    </div>
+    <div class="data-box">
+        <span class="data-num">100%</span>
+        <span class="data-label">SYSTEM_INTEGRITÄT</span>
     </div>
 </section>
 
 <footer>
-    <div>SYSTEM: AUSTRIAVISION v.2.6</div>
-    <div>TERMINAL 08/15 // NO UNAUTHORIZED ACCESS</div>
-    <div>© 2026 REPUBLIK</div>
+    <div>AUSTRIAVISION_OS // VER 3.5.0</div>
+    <div>(C) 2026 REPUBLIK ÖSTERREICH // DIGITAL DEFENSE UNIT</div>
+    <div>LOC: 48.2082 N, 16.3738 E</div>
 </footer>
 
 <script>
-    const dot = document.getElementById('dot');
-    const trail = document.getElementById('trail');
-    const title = document.getElementById('main-title');
+    const cross = document.getElementById('cross');
+    const dot = document.querySelector('.c-point');
     let mx = 0, my = 0;
-    let tx = 0, ty = 0;
 
-    // CURSOR LOGIC
+    // Smooth Cursor
     window.addEventListener('mousemove', e => {
         mx = e.clientX;
         my = e.clientY;
         dot.style.left = mx + 'px';
         dot.style.top = my + 'px';
-
-        // Update Reflection in Cards
-        document.querySelectorAll('.card-inner').forEach(card => {
-            const rect = card.getBoundingClientRect();
-            const px = ((e.clientX - rect.left) / rect.width) * 100;
-            const py = ((e.clientY - rect.top) / rect.height) * 100;
-            card.style.setProperty('--px', `${px}%`);
-            card.style.setProperty('--py', `${py}%`);
-        });
-    });
-
-    function render() {
-        tx += (mx - tx) * 0.1;
-        ty += (my - ty) * 0.1;
-        trail.style.left = tx + 'px';
-        trail.style.top = ty + 'px';
         
-        // Subtiler Parallax für Titel
-        const scroll = window.pageYOffset;
-        title.style.transform = `translateY(${scroll * 0.15}px)`;
-        title.style.opacity = 1 - (scroll / 800);
-
-        requestAnimationFrame(render);
-    }
-    render();
-
-    // 3D TILT WITH SMOOTHING
-    document.querySelectorAll('.item-3d').forEach(wrapper => {
-        const card = wrapper.querySelector('.card-inner');
-        wrapper.addEventListener('mousemove', e => {
-            const r = wrapper.getBoundingClientRect();
-            const x = e.clientX - r.left - r.width/2;
-            const y = e.clientY - r.top - r.height/2;
-            
-            card.style.transform = `rotateY(${x/20}deg) rotateX(${-y/20}deg)`;
-        });
-
-        wrapper.addEventListener('mouseleave', () => {
-            card.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        });
+        // Follow effect
+        setTimeout(() => {
+            cross.style.left = mx + 'px';
+            cross.style.top = my + 'px';
+        }, 30);
     });
 
-    // HOVER EFFECTS
-    document.querySelectorAll('.item-3d, a').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            dot.style.transform = 'translate(-50%, -50%) scale(8)';
-            dot.style.background = 'rgba(255,255,255,0.1)';
+    // Clock Logic
+    function updateTime() {
+        const now = new Date();
+        const timeStr = now.getHours().toString().padStart(2, '0') + ":" + 
+                        now.getMinutes().toString().padStart(2, '0') + ":" + 
+                        now.getSeconds().toString().padStart(2, '0');
+        document.getElementById('live-clock').innerText = timeStr;
+    }
+    setInterval(updateTime, 1000);
+
+    // Parallax & Card Animation
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        document.body.style.backgroundPositionY = -(scrolled * 0.2) + 'px';
+    });
+
+    // Interaction Feedback
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            cross.style.width = '70px';
+            cross.style.height = '70px';
+            cross.style.borderColor = '#fff';
         });
-        el.addEventListener('mouseleave', () => {
-            dot.style.transform = 'translate(-50%, -50%) scale(1)';
-            dot.style.background = '#fff';
+        card.addEventListener('mouseleave', () => {
+            cross.style.width = '50px';
+            cross.style.height = '50px';
+            cross.style.borderColor = 'var(--at-red)';
         });
     });
 </script>
