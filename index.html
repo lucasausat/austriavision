@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUSTRIAVISION | Das ultimative 2-in-1 Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ed2939; 
+            --bg: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* FLAGGEN-SCHWEIF CURSOR */
+        #cursor-container { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10000; }
+        .cursor-dot { width: 4px; height: 4px; background: white; border-radius: 50%; position: fixed; transform: translate(-50%, -50%); }
+        .flag-segment {
+            position: fixed; width: 20px; height: 12px;
+            display: flex; flex-direction: column;
+            pointer-events: none; opacity: 0.8;
+            transition: transform 0.1s ease-out;
+            border: 0.5px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(237, 41, 57, 0.3);
+        }
+        .f-red { background: #ed2939; flex: 1; }
+        .f-white { background: #ffffff; flex: 1; }
+
+        /* Rot-Weiße Titel-Animation */
+        @keyframes rw-glow {
+            0%, 100% { color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+            50% { color: var(--primary); text-shadow: 0 0 25px rgba(237, 41, 57, 0.5); }
+        }
+        .animated-title { animation: rw-glow 4s infinite ease-in-out; }
+
+        /* Navigation */
+        nav {
+            padding: 20px 6%; display: flex; justify-content: space-between;
+            align-items: center; position: fixed; width: 100%; z-index: 1000;
+            backdrop-filter: blur(20px); background: rgba(0,0,0,0.7);
+            border-bottom: 1px solid var(--border);
+        }
+        .logo { font-weight: 900; font-size: 1.2rem; letter-spacing: 5px; color: #fff; text-decoration: none; }
+        .logo span { color: var(--primary); }
+        
+        .nav-links a {
+            color: white; text-decoration: none; font-size: 0.7rem; letter-spacing: 2px;
+            margin-left: 30px; font-weight: 700; transition: 0.3s; opacity: 0.6;
+        }
+        .nav-links a:hover { opacity: 1; color: var(--primary); }
+
+        /* E-BOOK OVERLAY */
+        #history-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 10000;
+            display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(15px);
+        }
+        .book-container {
+            width: 90%; max-width: 800px; background: #0a0a0a;
+            border: 1px solid var(--border); border-radius: 10px;
+            padding: 50px; position: relative; max-height: 80vh; overflow-y: auto;
+        }
+        .close-book { position: absolute; top: 20px; right: 30px; font-size: 2rem; color: var(--primary); }
+        .history-page h3 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--primary); margin-bottom: 20px; }
+
+        /* 3D Header */
+        header {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden; perspective: 1000px;
+        }
+        .stage { position: absolute; width: 100%; height: 100%; transform-style: preserve-3d; pointer-events: none; }
+        .tunnel { position: absolute; transform-style: preserve-3d; animation: fly 35s infinite linear; }
+        @keyframes fly { 0% { transform: translateZ(-1500px); } 100% { transform: translateZ(800px); } }
+
+        .floating-card {
+            position: absolute; padding: 12px 25px; background: var(--glass);
+            border: 1px solid var(--border); border-radius: 4px; font-size: 0.6rem; 
+            letter-spacing: 4px; text-transform: uppercase; backdrop-filter: blur(5px);
+        }
+
+        /* NEU: Quick Stats Bar */
+        .quick-stats {
+            display: flex; justify-content: space-around; padding: 60px 0;
+            background: linear-gradient(90deg, transparent, var(--glass), transparent);
+            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+            margin: 80px 0; text-align: center;
+        }
+        .stat-item h4 { font-size: 2.5rem; color: var(--primary); font-family: 'Playfair Display'; margin-bottom: 5px; }
+        .stat-item p { font-size: 0.6rem; letter-spacing: 3px; opacity: 0.5; text-transform: uppercase; }
+
+        /* Portal Sektion */
+        .main-portal { padding: 100px 8%; background: var(--bg); position: relative; z-index: 10; }
+        .section-intro { text-align: center; margin-bottom: 80px; }
+        .section-intro h2 { font-family: 'Playfair Display', serif; font-size: 4rem; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; }
+
+        .state-card {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 20px; overflow: hidden; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .state-card:hover { transform: translateY(-15px); border-color: var(--primary); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .state-img { width: 100%; height: 230px; object-fit: cover; opacity: 0.5; transition: 0.7s; }
+        .state-card:hover .state-img { opacity: 1; transform: scale(1.05); }
+
+        .state-content { padding: 30px; }
+        .state-content h3 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 5px; }
+        .tag { color: var(--primary); font-size: 0.65rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; display: block; }
+        
+        /* NEU: Mini-Lexikon Icons */
+        .mini-lexikon { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .mini-icon {
+            padding: 4px 10px; background: rgba(255,255,255,0.05);
+            border-radius: 15px; font-size: 0.65rem; border: 1px solid var(--border);
+            transition: 0.3s; opacity: 0.7;
+        }
+        .mini-icon:hover { background: var(--primary); opacity: 1; transform: scale(1.1); color: white; }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: 1s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        footer { padding: 60px; text-align: center; opacity: 0.2; font-size: 0.65rem; letter-spacing: 4px; border-top: 1px solid var(--border); }
+    </style>
+</head>
+<body>
+
+<div id="cursor-container">
+    <div class="cursor-dot" id="dot"></div>
+    <div class="flag-segment" id="flag-tail">
+        <div class="f-red"></div>
+        <div class="f-white"></div>
+        <div class="f-red"></div>
+    </div>
+</div>
+
+<nav>
+    <a href="#" class="logo">AUSTRI<span>A.</span>VISION</a>
+    <div class="nav-links">
+        <a href="#portal">PORTAL</a>
+        <a href="javascript:void(0)" onclick="toggleHistory()">HISTORIE</a>
+    </div>
+</nav>
+
+<div id="history-overlay">
+    <div class="book-container">
+        <div class="close-book" onclick="toggleHistory()" style="cursor: pointer;">&times;</div>
+        <div class="history-page">
+            <span class="tag">Digitale Chronik</span>
+            <h3>Entwicklung AT</h3>
+            <div style="border-left: 1px solid var(--primary); padding-left: 20px; margin-top: 30px;">
+                <p style="margin-bottom: 20px;"><strong>996:</strong> Ostarrîchi - Die erste Erwähnung.</p>
+                <p style="margin-bottom: 20px;"><strong>1273:</strong> Start der Habsburger-Ära.</p>
+                <p style="margin-bottom: 20px;"><strong>1918:</strong> Ausrufung der Republik.</p>
+                <p style="margin-bottom: 20px;"><strong>1955:</strong> Der Staatsvertrag - Österreich ist frei.</p>
+                <p style="margin-bottom: 20px;"><strong>2026:</strong> Technologische Spitzenposition im digitalen Europa.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="stage" id="stage">
+        <div class="tunnel">
+            <div class="floating-card" style="transform: translate3D(-500px, -200px, -800px)">ALPENGLÜHEN</div>
+            <div class="floating-card" style="transform: translate3D(500px, 150px, -1400px)">MELANGE</div>
+            <div class="floating-card" style="transform: translate3D(-300px, 300px, -2000px)">RESIDENZ</div>
+            <div class="floating-card" style="transform: translate3D(400px, -250px, -2600px)">GIPFELSIEG</div>
+        </div>
+    </div>
+    <div style="z-index: 100; text-align: center;">
+        <h1 class="animated-title" style="font-family: 'Playfair Display'; font-size: clamp(3rem, 12vw, 9rem); line-height: 0.8;">ÖSTERREICH</h1>
+        <p style="letter-spacing: 15px; opacity: 0.7; font-size: 0.7rem; margin-top: 20px; font-weight: 300;">VIRTUAL HERITAGE EXPERIENCE</p>
+    </div>
+</header>
+
+<section class="main-portal" id="portal">
+    
+    <div class="quick-stats reveal">
+        <div class="stat-item"><h4>83.879</h4><p>km² Fläche</p></div>
+        <div class="stat-item"><h4>3.798</h4><p>m Glockner</p></div>
+        <div class="stat-item"><h4>9.1M</h4><p>Einwohner</p></div>
+    </div>
+
+    <div class="section-intro reveal">
+        <span class="tag">Daten & Fakten</span>
+        <h2 class="animated-title">Die Bundesländer</h2>
+    </div>
+
+    <div class="grid">
+        <div class="state-card reveal">
+            <img src="https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=600" class="state-img">
+            <div class="state-content">
+                <span class="tag">Hauptstadt</span>
+                <h3>Wien</h3>
+                <p>Kaiserliches Flair & Moderne.</p>
+                <div class="mini-lexikon">
+                    <span class="mini-icon">🎡 Prater</span>
+                    <span class="mini-icon">🍰 Sachertorte</span>
+                    <span class="mini-icon">🏛️ Hofburg</span>
+                </div>
+            </div>
+        </div>
+        <div class="state-card reveal">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=600" class="state-img">
+            <div class="state-content">
+                <span class="tag">Alpin</span>
+                <h3>Tirol</h3>
+                <p>Das Herz der Alpenwelt.</p>
+                <div class="mini-lexikon">
+                    <span class="mini-icon">⛷️ Ski-Welt</span>
+                    <span class="mini-icon">🏔️ Gipfel</span>
+                    <span class="mini-icon">🏘️ Innsbruck</span>
+                </div>
+            </div>
+        </div>
+        <div class="state-card reveal">
+            <img src="https://images.unsplash.com/photo-1597605051189-9892580a6519?auto=format&fit=crop&w=600" class="state-img">
+            <div class="state-content">
+                <span class="tag">Kultur</span>
+                <h3>Salzburg</h3>
+                <p>Bühne der Weltkultur.</p>
+                <div class="mini-lexikon">
+                    <span class="mini-icon">🎵 Mozart</span>
+                    <span class="mini-icon">🏰 Festung</span>
+                    <span class="mini-icon">🎭 Festspiele</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    &copy; 2026 AUSTRIAVISION • VIRTUAL REALITY INTERFACE • REPUBLIK ÖSTERREICH
+</footer>
+
+<script>
+    const dot = document.getElementById('dot');
+    const flag = document.getElementById('flag-tail');
+    const stage = document.getElementById('stage');
+    const historyOverlay = document.getElementById('history-overlay');
+
+    let mouseX = 0, mouseY = 0;
+    let flagX = 0, flagY = 0;
+
+    function toggleHistory() {
+        const isVisible = historyOverlay.style.display === 'flex';
+        historyOverlay.style.display = isVisible ? 'none' : 'flex';
+    }
+
+    document.addEventListener('mousemove', e => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        dot.style.left = mouseX + 'px';
+        dot.style.top = mouseY + 'px';
+
+        if(window.scrollY < window.innerHeight) {
+            const rx = (window.innerHeight / 2 - mouseY) / 45;
+            const ry = (mouseX - window.innerWidth / 2) / 45;
+            stage.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+        }
+    });
+
+    function animate() {
+        flagX += (mouseX - flagX) * 0.15;
+        flagY += (mouseY - flagY) * 0.15;
+        flag.style.left = (flagX + 15) + 'px';
+        flag.style.top = (flagY + 15) + 'px';
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('active');
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    document.querySelectorAll('.state-card, a, .mini-icon, .close-book').forEach(el => {
+        el.addEventListener('mouseenter', () => dot.style.transform = 'translate(-50%, -50%) scale(8)');
+        el.addEventListener('mouseleave', () => dot.style.transform = 'translate(-50%, -50%) scale(1)');
+    });
+</script>
+
+</body>
+</html>
