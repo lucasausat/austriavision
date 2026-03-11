@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AUSTRIAVISION // PROTOTYPE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
+    <title>AUSTRIAVISION // ADVANCED PROTOCOL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;900&family=Playfair+Display:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
     <style>
         :root {
             --at-red: #ed2939; 
-            --deep-black: #020202;
-            --glass-core: rgba(255, 255, 255, 0.015);
-            --line: rgba(255, 255, 255, 0.07);
+            --deep-black: #050505;
+            --glass: rgba(255, 255, 255, 0.03);
+            --line: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(237, 41, 57, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
@@ -18,98 +19,136 @@
         body {
             background: var(--deep-black);
             font-family: 'Inter', sans-serif;
-            color: #efefef;
+            color: #ffffff;
             overflow-x: hidden;
-            /* Hintergrund-Atmosphäre */
-            background-image: radial-gradient(circle at 50% -20%, #2a0a0a 0%, var(--deep-black) 70%);
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a0505 0%, var(--deep-black) 75%),
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 100%, 100% 4px, 100% 100%; /* CRT Scanline Effekt */
             background-attachment: fixed;
         }
 
-        /* CUSTOM CURSOR SYSTEM */
+        /* CUSTOM CURSOR */
         #c-main { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99999; }
-        .c-point { width: 6px; height: 6px; background: #fff; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); }
+        .c-point { width: 4px; height: 4px; background: #fff; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .c-trail {
-            position: absolute; width: 24px; height: 14px;
+            position: absolute; width: 30px; height: 18px;
             display: flex; flex-direction: column;
-            border: 1px solid rgba(255,255,255,0.2);
-            box-shadow: 0 0 20px rgba(237, 41, 57, 0.4);
+            border: 1px solid rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%);
+            backdrop-filter: invert(0.1);
         }
-        .tr-r { background: var(--at-red); flex: 1; }
-        .tr-w { background: #fff; flex: 1; }
+        .tr-r { background: var(--at-red); flex: 1; opacity: 0.8; }
+        .tr-w { background: #fff; flex: 1; opacity: 0.8; }
 
-        /* NAV HARD-STYLE */
+        /* NAV */
         nav {
-            position: fixed; top: 0; width: 100%; height: 80px;
+            position: fixed; top: 0; width: 100%; height: 70px;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%; z-index: 1000;
+            padding: 0 4%; z-index: 1000;
             border-bottom: 1px solid var(--line);
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+            background: rgba(2, 2, 2, 0.7); backdrop-filter: blur(20px);
         }
-        .brand { font-size: 0.9rem; font-weight: 900; letter-spacing: 0.4em; text-transform: uppercase; }
-        .brand span { color: var(--at-red); text-shadow: 0 0 10px var(--at-red); }
-        
+        .brand { font-size: 0.8rem; font-weight: 900; letter-spacing: 0.5em; }
+        .brand span { color: var(--at-red); text-shadow: 0 0 15px var(--at-red); }
         .nav-links a {
-            font-size: 0.65rem; color: #777; text-decoration: none;
-            margin-left: 40px; letter-spacing: 2px; transition: 0.4s;
+            font-size: 0.6rem; color: rgba(255,255,255,0.4); text-decoration: none;
+            margin-left: 35px; letter-spacing: 3px; transition: 0.3s;
+            text-transform: uppercase;
         }
-        .nav-links a:hover { color: var(--at-red); }
+        .nav-links a:hover { color: #fff; text-shadow: 0 0 10px #fff; }
 
         /* HERO AREA */
         header {
             height: 100vh; display: flex; align-items: center; justify-content: center;
-            perspective: 2000px; position: relative;
+            flex-direction: column; overflow: hidden;
         }
         .glitch-title {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(4rem, 15vw, 12rem);
-            line-height: 0.85; text-align: center;
-            position: relative; z-index: 5;
+            font-size: clamp(5rem, 18vw, 15rem);
+            line-height: 0.8; text-align: center;
+            background: linear-gradient(to bottom, #fff 30%, rgba(255,255,255,0.2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
         }
-
         .hero-sub {
-            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
-            font-size: 0.6rem; letter-spacing: 1.2em; opacity: 0.4; white-space: nowrap;
+            margin-top: 40px; font-size: 0.65rem; letter-spacing: 1.5em;
+            color: var(--at-red); font-weight: 900; opacity: 0.8;
         }
 
-        /* 3D CARDS SECTION */
-        .portal-wrap { padding: 150px 8%; }
+        /* PORTAL CARDS */
+        .portal-wrap { padding: 100px 6%; }
         .grid-3d { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
-            gap: 50px; 
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
+            gap: 60px; 
         }
 
         .item-3d {
-            background: var(--glass-core);
-            border: 1px solid var(--line);
-            border-radius: 2px;
-            height: 500px;
+            height: 550px;
             position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out; /* Dynamisch via JS */
+            perspective: 1000px;
+            cursor: pointer;
         }
 
-        .item-inner {
-            position: absolute; inset: 20px;
+        .card-inner {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            background: var(--glass);
             border: 1px solid var(--line);
-            padding: 40px;
-            display: flex; flex-direction: column; justify-content: flex-end;
-            transform: translateZ(50px); /* Der Pop-Out Effekt */
+            transition: transform 0.1s ease-out;
+            overflow: hidden;
+        }
+
+        .card-inner::before { /* Reflection Glare */
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at var(--px) var(--py), rgba(255,255,255,0.15) 0%, transparent 60%);
+            z-index: 5; pointer-events: none;
         }
 
         .item-3d img {
             position: absolute; inset: 0;
             width: 100%; height: 100%;
-            object-fit: cover; opacity: 0.3;
-            transition: 0.6s;
+            object-fit: cover; opacity: 0.25;
+            filter: grayscale(1) contrast(1.2);
+            transition: 0.8s cubic-bezier(0.2, 1, 0.3, 1);
         }
 
-        .item-3d:hover img { opacity: 0.7; }
-        .item-3d h3 { font-family: 'Playfair Display'; font-size: 3rem; margin-bottom: 10px; }
+        .item-3d:hover img { opacity: 0.5; filter: grayscale(0.5) contrast(1); transform: scale(1.1); }
+
+        .content-box {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 40px; transform: translateZ(60px);
+            z-index: 10;
+        }
+
+        .content-box h3 { 
+            font-family: 'Playfair Display'; font-size: 3.5rem; 
+            line-height: 1; margin-bottom: 15px; 
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .loc-id {
+            display: block; color: var(--at-red);
+            font-weight: 900; font-size: 0.7rem;
+            letter-spacing: 5px; margin-bottom: 10px;
+        }
 
         /* FOOTER */
-        footer { padding: 80px; text-align: center; border-top: 1px solid var(--line); font-size: 0.6rem; letter-spacing: 5px; opacity: 0.3; }
+        footer { 
+            padding: 100px 4%; 
+            display: flex; justify-content: space-between;
+            border-top: 1px solid var(--line); 
+            font-size: 0.55rem; letter-spacing: 4px; color: rgba(255,255,255,0.2); 
+        }
 
+        @media (max-width: 768px) {
+            .grid-3d { grid-template-columns: 1fr; }
+            .glitch-title { font-size: 5rem; }
+        }
     </style>
 </head>
 <body>
@@ -126,91 +165,125 @@
 <nav>
     <div class="brand">AUSTRIA<span>VISION</span></div>
     <div class="nav-links">
-        <a href="#portal">DATABASE</a>
-        <a href="#" id="history-trigger">CHRONIK</a>
+        <a href="#portal">Database</a>
+        <a href="#">Chronik</a>
+        <a href="#" style="color:var(--at-red)">Secure_Login</a>
     </div>
 </nav>
 
 <header>
-    <h1 class="glitch-title">ÖSTER<br>REICH</h1>
-    <div class="hero-sub">VIRTUAL HERITAGE PROTOCOL // 2026</div>
+    <h1 class="glitch-title" id="main-title">ÖSTER<br>REICH</h1>
+    <div class="hero-sub">PROTOCOL ACTIVE // 48.2082° N, 16.3738° E</div>
 </header>
 
 <section class="portal-wrap" id="portal">
     <div class="grid-3d">
         <div class="item-3d">
-            <img src="https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=800">
-            <div class="item-inner">
-                <span style="color:var(--at-red); font-weight:900; font-size:0.7rem; letter-spacing:3px;">LOC_01</span>
-                <h3>WIEN</h3>
-                <p style="opacity:0.6; font-size:0.8rem;">Metropole der Moderne & Geschichte.</p>
+            <div class="card-inner">
+                <img src="https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=1200">
+                <div class="content-box">
+                    <span class="loc-id">LOC_01 / CAP</span>
+                    <h3>WIEN</h3>
+                    <p style="opacity:0.5; font-size:0.75rem; max-width:250px;">Zentralarchiv für imperiale Geschichte und digitale Urbanität.</p>
+                </div>
             </div>
         </div>
 
         <div class="item-3d">
-            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800">
-            <div class="item-inner">
-                <span style="color:var(--at-red); font-weight:900; font-size:0.7rem; letter-spacing:3px;">LOC_02</span>
-                <h3>TIROL</h3>
-                <p style="opacity:0.6; font-size:0.8rem;">Gipfelarchitektur & Alpinismus.</p>
+            <div class="card-inner">
+                <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1200">
+                <div class="content-box">
+                    <span class="loc-id">LOC_02 / ALP</span>
+                    <h3>TIROL</h3>
+                    <p style="opacity:0.5; font-size:0.75rem; max-width:250px;">Hochalpine Verteidigungssysteme und Naturschutz-Protokoll.</p>
+                </div>
             </div>
         </div>
 
         <div class="item-3d">
-            <img src="https://images.unsplash.com/photo-1597605051189-9892580a6519?auto=format&fit=crop&w=800">
-            <div class="item-inner">
-                <span style="color:var(--at-red); font-weight:900; font-size:0.7rem; letter-spacing:3px;">LOC_03</span>
-                <h3>SALZBURG</h3>
-                <p style="opacity:0.6; font-size:0.8rem;">Bühne der Weltkultur.</p>
+            <div class="card-inner">
+                <img src="https://images.unsplash.com/photo-1597605051189-9892580a6519?auto=format&fit=crop&w=1200">
+                <div class="content-box">
+                    <span class="loc-id">LOC_03 / ART</span>
+                    <h3>SALZBURG</h3>
+                    <p style="opacity:0.5; font-size:0.75rem; max-width:250px;">Akustische Signalverarbeitung und klassische Resonanz.</p>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <footer>
-    EST. 2026 // SYSTEM TERMINAL // REPUBLIK ÖSTERREICH
+    <div>SYSTEM: AUSTRIAVISION v.2.6</div>
+    <div>TERMINAL 08/15 // NO UNAUTHORIZED ACCESS</div>
+    <div>© 2026 REPUBLIK</div>
 </footer>
 
 <script>
     const dot = document.getElementById('dot');
     const trail = document.getElementById('trail');
+    const title = document.getElementById('main-title');
     let mx = 0, my = 0;
     let tx = 0, ty = 0;
 
-    // Smooth Cursor Follow
+    // CURSOR LOGIC
     window.addEventListener('mousemove', e => {
         mx = e.clientX;
         my = e.clientY;
         dot.style.left = mx + 'px';
         dot.style.top = my + 'px';
+
+        // Update Reflection in Cards
+        document.querySelectorAll('.card-inner').forEach(card => {
+            const rect = card.getBoundingClientRect();
+            const px = ((e.clientX - rect.left) / rect.width) * 100;
+            const py = ((e.clientY - rect.top) / rect.height) * 100;
+            card.style.setProperty('--px', `${px}%`);
+            card.style.setProperty('--py', `${py}%`);
+        });
     });
 
     function render() {
-        tx += (mx - tx) * 0.12;
-        ty += (my - ty) * 0.12;
-        trail.style.left = (tx + 15) + 'px';
-        trail.style.top = (ty + 15) + 'px';
+        tx += (mx - tx) * 0.1;
+        ty += (my - ty) * 0.1;
+        trail.style.left = tx + 'px';
+        trail.style.top = ty + 'px';
+        
+        // Subtiler Parallax für Titel
+        const scroll = window.pageYOffset;
+        title.style.transform = `translateY(${scroll * 0.15}px)`;
+        title.style.opacity = 1 - (scroll / 800);
+
         requestAnimationFrame(render);
     }
     render();
 
-    // 3D TILT EFFECT (PRO VERSION)
-    document.querySelectorAll('.item-3d').forEach(card => {
-        card.addEventListener('mousemove', e => {
-            const r = card.getBoundingClientRect();
+    // 3D TILT WITH SMOOTHING
+    document.querySelectorAll('.item-3d').forEach(wrapper => {
+        const card = wrapper.querySelector('.card-inner');
+        wrapper.addEventListener('mousemove', e => {
+            const r = wrapper.getBoundingClientRect();
             const x = e.clientX - r.left - r.width/2;
             const y = e.clientY - r.top - r.height/2;
-            card.style.transform = `rotateY(${x/15}deg) rotateX(${-y/15}deg)`;
+            
+            card.style.transform = `rotateY(${x/20}deg) rotateX(${-y/20}deg)`;
         });
-        card.addEventListener('mouseleave', () => {
+
+        wrapper.addEventListener('mouseleave', () => {
             card.style.transform = `rotateY(0deg) rotateX(0deg)`;
         });
     });
 
-    // Hover Scaling for interactive elements
+    // HOVER EFFECTS
     document.querySelectorAll('.item-3d, a').forEach(el => {
-        el.addEventListener('mouseenter', () => dot.style.transform = 'translate(-50%, -50%) scale(10)');
-        el.addEventListener('mouseleave', () => dot.style.transform = 'translate(-50%, -50%) scale(1)');
+        el.addEventListener('mouseenter', () => {
+            dot.style.transform = 'translate(-50%, -50%) scale(8)';
+            dot.style.background = 'rgba(255,255,255,0.1)';
+        });
+        el.addEventListener('mouseleave', () => {
+            dot.style.transform = 'translate(-50%, -50%) scale(1)';
+            dot.style.background = '#fff';
+        });
     });
 </script>
 
