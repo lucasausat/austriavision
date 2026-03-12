@@ -1,299 +1,56 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Österreich | Info-Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --oe-red: #ed2939;
-            --bg-light: #f8f9fa;
-            --text-main: #1a1a1a;
-            --card-bg: #ffffff;
-        }
-
-        /* DARK MODE FARBEN */
-        body.dark-mode {
-            --bg-light: #121212;
-            --text-main: #e0e0e0;
-            --card-bg: #1e1e1e;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); transition: background 0.5s, color 0.5s; overflow-x: hidden; }
-
-        /* --- LOADER & PARTIKEL --- */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            overflow: hidden;
-        }
-        .particle {
-            position: absolute; color: #ddd; font-size: 20px;
-            animation: fall linear forwards;
-            pointer-events: none;
-        }
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); }
-        }
-        .loader-bar-container { width: 200px; height: 4px; background: #eee; margin-top: 20px; overflow: hidden; border-radius: 2px; position: relative; z-index: 2; }
-        .loader-bar { width: 0%; height: 100%; background: var(--oe-red); transition: width 0.4s ease; }
-
-        /* --- MODERNE FRAGEN GUI --- */
-        #decision-gui {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9500; display: none;
-            align-items: center; justify-content: center; text-align: center; color: white;
-        }
-        .gui-box { background: #fff; color: #000; padding: 40px; border-radius: 15px; max-width: 400px; }
-        .gui-btn { 
-            display: block; width: 100%; padding: 15px; margin: 10px 0; 
-            border: none; border-radius: 5px; cursor: pointer; font-weight: 700; transition: 0.3s;
-        }
-        .btn-video { background: var(--oe-red); color: white; }
-        .btn-direct { background: #eee; color: #000; }
-
-        /* --- VIDEO LAYER --- */
-        #video-intro {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9000; display: none; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .video-wrapper { width: 90%; max-width: 1000px; aspect-ratio: 16/9; }
-
-        /* --- WEBSITE CONTENT --- */
-        #main-content { display: none; opacity: 0; transition: opacity 1s ease; }
-        nav { background: var(--card-bg); padding: 20px 5%; display: flex; justify-content: space-between; border-bottom: 3px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; transition: background 0.5s; }
-        .logo { font-weight: 800; }
-        .logo span { color: var(--oe-red); }
-
-        header { padding: 80px 5%; text-align: center; }
-        
-        /* --- DATEN WECHSEL SEKTION --- */
-        .toggle-section { padding: 40px 5%; text-align: center; }
-        .book-icon { font-size: 60px; cursor: pointer; transition: transform 0.3s ease, opacity 0.3s ease; display: inline-block; user-select: none; }
-        .book-icon:hover { transform: scale(1.1); color: var(--oe-red); }
-        .book-disabled { opacity: 0.5; cursor: not-allowed !important; transform: scale(0.9) !important; }
-        
-        #region-data, #general-data { margin-top: 30px; transition: opacity 0.5s; }
-        #region-data { display: none; }
-
-        /* SVG KARTE */
-        .map-container { max-width: 500px; margin: 20px auto; fill: #ccc; cursor: pointer; }
-        .land:hover { fill: var(--oe-red); }
-        #land-info { margin: 15px; font-weight: 600; color: var(--oe-red); min-height: 24px; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 10px; border: 1px solid #ddd; text-align: left; transition: background 0.5s; }
-
-        .stats-bar { background: #1a1a1a; color: #fff; padding: 40px; display: flex; justify-content: space-around; flex-wrap: wrap; }
-        .stat-item h2 { color: var(--oe-red); font-size: 2.5rem; }
-
-        /* DARK MODE TOGGLE */
-        #dark-mode-toggle {
-            position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px;
-            background: var(--oe-red); color: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 2000; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-        }
-
-        footer { padding: 30px; background: var(--card-bg); text-align: center; font-size: 0.8rem; color: #555; border-top: 1px solid #ddd; }
-    </style>
-</head>
-<body>
-
-<div id="loader">
-    <div style="font-weight: 800; font-size: 1.5rem; position: relative; z-index: 2;">ÖSTERREICH <span>PROJEKT</span></div>
-    <div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
-</div>
-
-<div id="dark-mode-toggle" onclick="toggleDarkMode()">🌓</div>
-
-<div id="decision-gui">
-    <div class="gui-box">
-        <h2>Willkommen</h2>
-        <p style="margin-bottom: 20px;">Möchtest du das Video-Intro sehen oder direkt zum Portal?</p>
-        <button class="gui-btn btn-video" onclick="startWithVideo()">🎬 Intro mit Sound</button>
-        <button class="gui-btn btn-direct" onclick="exitVideo()">➡️ Direkt zum Portal</button>
-    </div>
-</div>
-
-<div id="video-intro">
-    <div class="video-wrapper">
-        <div id="player"></div>
-    </div>
-    <button class="gui-btn" style="width: 200px; background: white; margin-top: 20px;" onclick="exitVideo()">Überspringen</button>
-</div>
-
-<div id="main-content">
-    <nav>
-        <div class="logo">ÖSTERREICH<span>.info</span></div>
-        <div style="font-size: 0.8rem; font-weight: 600;">Unabhängiges Web-Projekt</div>
-    </nav>
-
-    <header>
-        <h1>Entdecke die Republik.</h1>
-        <p>Ein interaktives Informationsportal über die Vielfalt Österreichs.</p>
-    </header>
-
-    <section class="toggle-section">
-        <div class="book-icon" id="main-book" onclick="toggleData()">📖</div>
-        <p id="toggle-label" style="font-weight: 600; margin-top: 10px;">Klicke auf das Buch für Bundesländer!</p>
-
-        <div id="general-data">
-            <h2>Allgemeine Fakten</h2>
-            <div class="grid">
-                <div class="card"><h3>Nachhaltigkeit</h3><p>Über 75% des Stroms kommen aus erneuerbaren Energien.</p></div>
-                <div class="card"><h3>Berge</h3><p>Österreich hat fast 7.000 Gipfel über 2.000 Meter.</p></div>
-                <div class="card"><h3>Kultur</h3><p>Wien wurde mehrfach als lebenswerteste Stadt der Welt ausgezeichnet.</p></div>
-            </div>
-        </div>
-
-        <div id="region-data">
-            <h2>Interaktive Karte</h2>
-            <div class="map-container">
-                <svg viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
-                    <rect class="land" x="500" y="50" width="80" height="100" onclick="mapClick('Wien')" title="Wien" />
-                    <rect class="land" x="400" y="30" width="100" height="150" onclick="mapClick('Niederösterreich')" />
-                    <rect class="land" x="250" y="50" width="140" height="80" onclick="mapClick('Oberösterreich')" />
-                    <rect class="land" x="350" y="180" width="120" height="70" onclick="mapClick('Steiermark')" />
-                    <rect class="land" x="100" y="150" width="130" height="50" onclick="mapClick('Tirol')" />
-                    <rect class="land" x="220" y="130" width="60" height="60" onclick="mapClick('Salzburg')" />
-                    <rect class="land" x="280" y="200" width="100" height="50" onclick="mapClick('Kärnten')" />
-                    <rect class="land" x="20" y="140" width="60" height="50" onclick="mapClick('Vorarlberg')" />
-                    <rect class="land" x="530" y="160" width="40" height="100" onclick="mapClick('Burgenland')" />
-                    <text x="250" y="280" fill="#999" font-size="12">Klicke auf ein Feld (Region)</text>
-                </svg>
-            </div>
-            <div id="land-info">Wähle eine Region auf der Karte</div>
+<div id="region-data">
+    <h2>Interaktive Karte</h2>
+    <div class="map-container" style="max-width: 800px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.1));">
+        <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto;">
+            <style>
+                .land { 
+                    transition: all 0.3s ease; 
+                    stroke: #fff; 
+                    stroke-width: 1.5; 
+                    fill: #d1d1d1; /* Standard-Farbe */
+                }
+                body.dark-mode .land { fill: #333; stroke: #1a1a1a; }
+                .land:hover { 
+                    fill: var(--oe-red) !important; 
+                    filter: brightness(1.1);
+                    transform: translateY(-2px);
+                }
+                .land-label {
+                    font-family: 'Inter', sans-serif;
+                    font-size: 14px;
+                    font-weight: 800;
+                    fill: rgba(0,0,0,0.3);
+                    pointer-events: none;
+                    text-transform: uppercase;
+                }
+                body.dark-mode .land-label { fill: rgba(255,255,255,0.2); }
+            </style>
             
-            <div class="grid">
-                <div class="card"><h3>9 Bundesländer</h3><p>Von Vorarlberg bis ins Burgenland bietet jedes Land eigene Traditionen.</p></div>
-                <div class="card"><h3>Vielfalt</h3><p>Alpen im Westen, Pannonische Tiefebene im Osten.</p></div>
-            </div>
-        </div>
-    </section>
+            <path class="land" d="M30,150 L80,140 L90,180 L40,200 Z" onclick="mapClick('Vorarlberg')" />
+            <path class="land" d="M90,180 L250,160 L260,210 L150,230 L85,210 Z" onclick="mapClick('Tirol')" />
+            <path class="land" d="M250,160 L350,150 L360,250 L280,260 L260,210 Z" onclick="mapClick('Salzburg')" />
+            <path class="land" d="M260,50 L420,40 L440,150 L350,150 L250,160 Z" onclick="mapClick('Oberösterreich')" />
+            <path class="land" d="M420,40 L600,60 L620,200 L440,210 L440,150 Z" onclick="mapClick('Niederösterreich')" />
+            <circle class="land" cx="570" cy="110" r="25" onclick="mapClick('Wien')" style="fill: #999;" />
+            <path class="land" d="M360,250 L440,210 L580,240 L550,320 L380,330 Z" onclick="mapClick('Steiermark')" />
+            <path class="land" d="M280,260 L360,250 L500,310 L480,360 L300,350 Z" onclick="mapClick('Kärnten')" />
+            <path class="land" d="M600,60 L650,70 L630,300 L580,240 L620,200 Z" onclick="mapClick('Burgenland')" />
 
-    <section class="stats-bar">
-        <div class="stat-item"><h2 id="count1">0</h2><p>Einwohner</p></div>
-        <div class="stat-item"><h2>2.093</h2><p>Gemeinden</p></div>
-        <div class="stat-item"><h2>3.798m</h2><p>Höchster Punkt</p></div>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 Österreich Informations-Portal | Community Projekt</p>
-    </footer>
+            <text x="50" y="175" class="land-label">V</text>
+            <text x="150" y="200" class="land-label">T</text>
+            <text x="300" y="210" class="land-label">S</text>
+            <text x="320" y="100" class="land-label">OÖ</text>
+            <text x="500" y="100" class="land-label">NÖ</text>
+            <text x="560" y="115" class="land-label" style="fill:#fff; font-size:10px;">W</text>
+            <text x="450" y="270" class="land-label">ST</text>
+            <text x="370" y="320" class="land-label">K</text>
+            <text x="610" y="180" class="land-label" transform="rotate(10, 610, 180)">B</text>
+        </svg>
+    </div>
+    <div id="land-info" style="font-size: 1.5rem; letter-spacing: 1px; text-transform: uppercase;">Wähle eine Region auf der Karte</div>
+    
+    <div class="grid">
+        <div class="card"><h3>Föderalismus</h3><p>Jedes der 9 Bundesländer hat einen eigenen Landtag und eine eigene Landesregierung.</p></div>
+        <div class="card"><h3>Topographie</h3><p>60% des Staatsgebiets sind gebirgig (Alpenanteil).</p></div>
+    </div>
 </div>
-
-<script>
-    // --- PARTIKEL EFFEKT ---
-    function createParticle() {
-        const loader = document.getElementById('loader');
-        if(!loader) return;
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.innerHTML = '▲'; // Berg-Symbol
-        p.style.left = Math.random() * 100 + 'vw';
-        p.style.opacity = Math.random();
-        p.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        loader.appendChild(p);
-        setTimeout(() => p.remove(), 5000);
-    }
-    const particleInterval = setInterval(createParticle, 200);
-
-    // --- DARK MODE ---
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-    }
-
-    // --- MAP LOGIK ---
-    function mapClick(name) {
-        document.getElementById('land-info').innerText = "Ausgewählt: " + name;
-    }
-
-    // --- YOUTUBE API ---
-    var player;
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-            height: '100%', width: '100%',
-            videoId: 'Zn1S3RtGpWs',
-            playerVars: { 'autoplay': 0, 'controls': 1, 'vq': 'hd2160' },
-            events: { 'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) exitVideo(); } }
-        });
-    }
-
-    // LOADER
-    window.onload = () => {
-        let bar = document.getElementById('l-bar');
-        let w = 0;
-        let int = setInterval(() => {
-            w += Math.random() * 20;
-            if(w >= 100) {
-                w = 100;
-                clearInterval(int);
-                clearInterval(particleInterval);
-                setTimeout(() => {
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('decision-gui').style.display = 'flex';
-                }, 500);
-            }
-            bar.style.width = w + '%';
-        }, 150);
-    };
-
-    function startWithVideo() {
-        document.getElementById('decision-gui').style.display = 'none';
-        document.getElementById('video-intro').style.display = 'flex';
-        player.unMute(); player.playVideo();
-    }
-
-    function exitVideo() {
-        if(player) player.stopVideo();
-        document.getElementById('video-intro').style.display = 'none';
-        document.getElementById('decision-gui').style.display = 'none';
-        let main = document.getElementById('main-content');
-        main.style.display = 'block';
-        setTimeout(() => { main.style.opacity = '1'; animateValue("count1", 0, 9104772, 2000); }, 50);
-    }
-
-    // TOGGLE BUCH
-    let showRegions = false;
-    let canClick = true;
-    function toggleData() {
-        if(!canClick) return;
-        canClick = false;
-        const book = document.getElementById('main-book');
-        book.classList.add('book-disabled');
-        showRegions = !showRegions;
-        const gen = document.getElementById('general-data');
-        const reg = document.getElementById('region-data');
-        
-        gen.style.opacity = "0"; reg.style.opacity = "0";
-        setTimeout(() => {
-            gen.style.display = showRegions ? 'none' : 'block';
-            reg.style.display = showRegions ? 'block' : 'none';
-            gen.style.opacity = "1"; reg.style.opacity = "1";
-            setTimeout(() => { canClick = true; book.classList.remove('book-disabled'); }, 1000);
-        }, 300);
-    }
-
-    function animateValue(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('de-AT');
-            if (progress < 1) window.requestAnimationFrame(step);
-        };
-        window.requestAnimationFrame(step);
-    }
-</script>
-
-</body>
-</html>
