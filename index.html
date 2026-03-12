@@ -8,20 +8,36 @@
     <style>
         :root {
             --oe-red: #ed2939;
-            --oe-red-glow: rgba(237, 41, 57, 0.3);
+            --oe-red-glow: rgba(237, 41, 57, 0.4);
             --bg-light: #f4f7f6;
             --text-main: #1a1a1a;
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: rgba(255, 255, 255, 0.7); /* Glassmorphism Basis */
         }
 
         body.dark-mode {
-            --bg-light: #0f0f0f;
+            --bg-light: #0d0d0d;
             --text-main: #f0f0f0;
-            --card-bg: rgba(30, 30, 30, 0.9);
+            --card-bg: rgba(25, 25, 25, 0.7);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); transition: all 0.5s ease; overflow-x: hidden; }
+
+        /* --- GLASSMORPHISM --- */
+        .glass {
+            backdrop-filter: blur(12px) saturate(160%);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
+        }
+
+        /* --- MOBILE/iOS WARNING --- */
+        #mobile-warning {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: white; z-index: 20000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 30px;
+        }
 
         /* --- LOADER --- */
         #loader {
@@ -37,127 +53,174 @@
             background: rgba(0,0,0,0.95); z-index: 9500; display: none;
             align-items: center; justify-content: center; text-align: center; color: white;
         }
-        .gui-box { background: #fff; color: #000; padding: 40px; border-radius: 20px; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .gui-btn { 
-            display: block; width: 100%; padding: 15px; margin: 10px 0; 
-            border: none; border-radius: 10px; cursor: pointer; font-weight: 700; transition: 0.3s; font-size: 1rem;
-        }
-        .btn-video { background: var(--oe-red); color: white; }
-        .btn-direct { background: #eee; color: #000; }
-
-        /* --- VIDEO LAYER --- */
-        #video-intro {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9000; display: none; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .video-wrapper { width: 90%; max-width: 1000px; aspect-ratio: 16/9; box-shadow: 0 0 50px rgba(237,41,57,0.2); }
+        .gui-box { background: #fff; color: #000; padding: 40px; border-radius: 20px; max-width: 450px; }
 
         /* --- MAIN CONTENT --- */
         #main-content { display: none; opacity: 0; transition: opacity 1s ease; }
         nav { 
-            background: var(--card-bg); backdrop-filter: blur(10px); 
             padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; 
         }
-        .logo { font-weight: 800; font-family: 'Orbitron'; }
+        .logo { font-weight: 800; font-family: 'Orbitron'; letter-spacing: 1px; }
         .logo span { color: var(--oe-red); }
 
         header { padding: 100px 5% 50px; text-align: center; }
-        header h1 { font-size: 3rem; margin-bottom: 10px; }
 
-        /* --- MAP & INFO --- */
-        .map-section { padding: 40px 5%; display: flex; flex-direction: column; align-items: center; }
-        .map-container { width: 100%; max-width: 700px; background: var(--card-bg); padding: 20px; border-radius: 20px; }
-        .land-path { fill: #ccc; stroke: #fff; stroke-width: 1; transition: 0.3s; cursor: pointer; }
-        .land-path:hover { fill: var(--oe-red); filter: drop-shadow(0 0 5px var(--oe-red)); }
+        /* --- MAP HOVER EFFECTS --- */
+        .map-container { 
+            width: 100%; max-width: 800px; padding: 30px; border-radius: 30px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
+        }
+        .land-path { fill: #ccc; stroke: #fff; stroke-width: 1.5; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .land-path:hover { 
+            fill: var(--oe-red); 
+            filter: drop-shadow(0 0 15px var(--oe-red-glow));
+            transform: scale(1.02);
+        }
         
         #info-panel {
-            margin-top: 30px; width: 100%; max-width: 700px; padding: 25px;
-            background: var(--card-bg); border-left: 6px solid var(--oe-red); border-radius: 10px;
-            text-align: left; display: none; animation: fadeIn 0.5s;
+            margin-top: 30px; width: 100%; max-width: 700px; padding: 30px;
+            border-left: 8px solid var(--oe-red); border-radius: 15px;
+            display: none; animation: slideIn 0.5s ease;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 
         .bezirke-list { 
-            margin-top: 15px; font-size: 0.9rem; color: #666; 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 5px;
+            margin-top: 15px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px;
         }
-        body.dark-mode .bezirke-list { color: #aaa; }
 
-        /* --- STATS --- */
-        .stats-bar { background: #1a1a1a; color: #fff; padding: 50px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; text-align: center; }
-        .stat-item h2 { color: var(--oe-red); font-family: 'Orbitron'; font-size: 2.5rem; }
+        /* --- UI ELEMENTS --- */
+        .stat-item h2 { color: var(--oe-red); font-family: 'Orbitron'; font-size: 2.8rem; }
 
-        #dark-mode-toggle {
-            position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px;
-            background: var(--oe-red); color: white; border-radius: 50%;
+        .control-btn {
+            position: fixed; width: 55px; height: 55px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 2000; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            cursor: pointer; z-index: 2000; transition: 0.3s;
+            background: var(--oe-red); color: white; border: none; font-size: 1.2rem;
+        }
+        #dark-mode-toggle { bottom: 20px; right: 20px; }
+        #sound-toggle { bottom: 85px; right: 20px; background: #333; }
+        #fact-btn { bottom: 20px; left: 20px; width: auto; padding: 0 20px; border-radius: 30px; font-weight: 600; }
+
+        .gui-btn { 
+            display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; 
         }
     </style>
 </head>
 <body>
 
+<audio id="bg-ambient" loop src="https://www.soundjay.com/nature/sounds/wind-01.mp3"></audio>
+
+<div id="fact-btn" class="control-btn" onclick="showFact()">💡 Wusstest du schon?</div>
+
+<div id="mobile-warning">
+    <div class="warning-box" style="padding:40px; border: 2px solid var(--oe-red); border-radius: 20px;">
+        <h2 style="font-family: 'Orbitron';">DESKTOP VERSION REQUIRED</h2>
+        <button class="gui-btn" style="background:#eee; margin-top:20px;" onclick="closeWarning()">Trotzdem schauen</button>
+    </div>
+</div>
+
 <div id="loader">
-    <h1 style="font-family: 'Orbitron'; letter-spacing: 3px;">AUSTRIA</h1>
+    <h1 style="font-family: 'Orbitron'; letter-spacing: 5px;">VISION</h1>
     <div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
 </div>
 
 <div id="decision-gui">
-    <div class="gui-box">
-        <h2>Willkommen</h2>
-        <p style="margin-bottom: 20px;">Möchtest du das Video-Intro sehen oder direkt zum Portal?</p>
-        <button class="gui-btn btn-video" onclick="startWithVideo()">🎬 Intro starten</button>
-        <button class="gui-btn btn-direct" onclick="exitVideo()">➡️ Direkt zum Portal</button>
+    <div class="gui-box glass">
+        <h2 style="font-family: 'Orbitron';">ÖSTERREICH PORTAL</h2>
+        <p style="margin: 20px 0;">Bereit für das Info-Erlebnis?</p>
+        <button class="gui-btn" style="background:var(--oe-red); color:white;" onclick="startWithVideo()">🎬 Intro starten</button>
+        <button class="gui-btn" onclick="exitVideo()">➡️ Direkt zum Portal</button>
     </div>
 </div>
 
-<div id="video-intro">
-    <div class="video-wrapper"><div id="player"></div></div>
-    <button class="gui-btn" style="width: 200px; background: white; margin-top: 20px;" onclick="exitVideo()">Überspringen</button>
+<div id="video-intro" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:9000; display:none; flex-direction:column; align-items:center; justify-content:center;">
+    <div style="width:90%; max-width:1000px; aspect-ratio:16/9;" id="player"></div>
+    <button class="gui-btn" style="width:200px; margin-top:20px;" onclick="exitVideo()">Überspringen</button>
 </div>
 
-<div id="dark-mode-toggle" onclick="toggleDarkMode()">🌓</div>
+<div id="sound-toggle" class="control-btn" onclick="toggleSound()">🔇</div>
+<div id="dark-mode-toggle" class="control-btn" onclick="toggleDarkMode()">🌓</div>
 
 <div id="main-content">
-    <nav>
+    <nav class="glass">
         <div class="logo">ÖSTERREICH<span>.VISION</span></div>
-        <div id="clock" style="font-weight: 600;">00:00:00</div>
+        <div id="clock" style="font-weight: 600; font-family: 'Orbitron';">00:00:00</div>
     </nav>
 
     <header>
-        <h1>Daten & Fakten</h1>
-        <p>Interaktive Übersicht der Bundesländer und ihrer 94 Bezirke.</p>
+        <h1 style="font-size: 3.5rem; letter-spacing: -1px;">INTERAKTIVER DATEN-HUB</h1>
+        <p style="opacity: 0.7; font-size: 1.2rem;">Wählen Sie ein Bundesland für detaillierte Statistiken.</p>
     </header>
 
     <section class="map-section">
-        <div class="map-container">
+        <div class="map-container glass">
             <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
-                <path class="land-path" d="M50,200 L150,180 L160,250 L60,260 Z" onclick="updateInfo('vbg')" /> <path class="land-path" d="M160,250 L300,230 L320,300 L170,310 Z" onclick="updateInfo('tirol')" /> <path class="land-path" d="M300,230 L400,220 L410,330 L320,300 Z" onclick="updateInfo('sbg')" /> <path class="land-path" d="M310,100 L470,90 L490,210 L400,210 Z" onclick="updateInfo('ooe')" /> <path class="land-path" d="M410,330 L490,210 L630,280 L600,390 Z" onclick="updateInfo('stmk')" /> <path class="land-path" d="M320,300 L410,330 L550,400 L330,410 Z" onclick="updateInfo('ktn')" /> <path class="land-path" d="M470,90 L650,110 L670,270 L490,270 Z" onclick="updateInfo('noe')" /> <circle class="land-path" cx="620" cy="160" r="15" onclick="updateInfo('wien')" /> <path class="land-path" d="M650,110 L700,120 L680,390 L630,280 Z" onclick="updateInfo('bgld')" /> <text x="320" y="380" fill="#999" font-size="14">Klicke auf ein Bundesland</text>
+                <path class="land-path" d="M50,200 L150,180 L160,250 L60,260 Z" onclick="updateInfo('vbg')" />
+                <path class="land-path" d="M160,250 L300,230 L320,300 L170,310 Z" onclick="updateInfo('tirol')" />
+                <path class="land-path" d="M300,230 L400,220 L410,330 L320,300 Z" onclick="updateInfo('sbg')" />
+                <path class="land-path" d="M310,100 L470,90 L490,210 L400,210 Z" onclick="updateInfo('ooe')" />
+                <path class="land-path" d="M410,330 L490,210 L630,280 L600,390 Z" onclick="updateInfo('stmk')" />
+                <path class="land-path" d="M320,300 L410,330 L550,400 L330,410 Z" onclick="updateInfo('ktn')" />
+                <path class="land-path" d="M470,90 L650,110 L670,270 L490,270 Z" onclick="updateInfo('noe')" />
+                <circle class="land-path" cx="620" cy="160" r="15" onclick="updateInfo('wien')" />
+                <path class="land-path" d="M650,110 L700,120 L680,390 L630,280 Z" onclick="updateInfo('bgld')" />
             </svg>
         </div>
 
-        <div id="info-panel">
-            <h2 id="land-title">Bundesland</h2>
-            <p>Hauptstadt: <strong id="land-cap">-</strong> | Bezirke: <strong id="land-count">-</strong></p>
-            <hr style="margin: 15px 0; opacity: 0.2;">
-            <p><strong>Alle Bezirke:</strong></p>
+        <div id="info-panel" class="glass">
+            <h2 id="land-title" style="font-family:'Orbitron'; color:var(--oe-red);">Bundesland</h2>
+            <p style="font-size: 1.1rem; margin: 10px 0;">Hauptstadt: <strong id="land-cap">-</strong> | Bezirke: <strong id="land-count">-</strong></p>
             <div id="bezirke-list" class="bezirke-list"></div>
         </div>
     </section>
 
-    <section class="stats-bar">
-        <div class="stat-item"><h2 id="count1">0</h2><p>Einwohner</p></div>
-        <div class="stat-item"><h2>2.093</h2><p>Gemeinden</p></div>
-        <div class="stat-item"><h2>94</h2><p>Bezirke & Städte</p></div>
+    <section class="stats-bar" style="background:#111; color:white; padding: 80px 5%;">
+        <div class="stat-item"><h2>9.1M</h2><p>Einwohner (ca.)</p></div>
+        <div class="stat-item"><h2>9</h2><p>Bundesländer</p></div>
+        <div class="stat-item"><h2>∞</h2><p>Visionen</p></div>
     </section>
 
-    <footer>
-        <p>&copy; 2026 Österreich Vision Projekt | Daten: Statistik Austria</p>
+    <footer style="padding: 50px; text-align: center; opacity: 0.5;">
+        &copy; 2026 Österreich Vision | Design & Daten
     </footer>
 </div>
 
 <script>
+    const facts = [
+        "In Österreich gibt es die älteste Zeitung der Welt (Wiener Zeitung).",
+        "Fast 60% Österreichs liegen in den Alpen.",
+        "Österreich hat die höchste Dichte an Bio-Bauern in der EU.",
+        "Die Nationalbibliothek in Wien beherbergt über 12 Millionen Objekte.",
+        "Die höchste Erhebung ist der Großglockner mit 3.798 Metern."
+    ];
+
+    function showFact() {
+        const randomFact = facts[Math.floor(Math.random() * facts.length)];
+        alert("FAKT: " + randomFact);
+    }
+
+    function toggleSound() {
+        const audio = document.getElementById('bg-ambient');
+        const btn = document.getElementById('sound-toggle');
+        if (audio.paused) {
+            audio.play();
+            btn.innerText = "🔊";
+        } else {
+            audio.pause();
+            btn.innerText = "🔇";
+        }
+    }
+
+    // --- DETECTION FOR MOBILE/iOS ---
+    function checkDevice() {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isMobile = window.innerWidth < 768;
+        if (isIOS || isMobile) document.getElementById('mobile-warning').style.display = 'flex';
+    }
+    function closeWarning() { document.getElementById('mobile-warning').style.display = 'none'; }
+    checkDevice();
+
     const data = {
         vbg: { name: "Vorarlberg", cap: "Bregenz", count: 4, list: ["Bregenz", "Dornbirn", "Feldkirch", "Bludenz"] },
         tirol: { name: "Tirol", cap: "Innsbruck", count: 9, list: ["Innsbruck (Stadt)", "Innsbruck-Land", "Imst", "Kitzbühel", "Kufstein", "Landeck", "Lienz", "Reutte", "Schwaz"] },
@@ -172,21 +235,19 @@
 
     function updateInfo(key) {
         const item = data[key];
-        document.getElementById('info-panel').style.display = 'block';
+        const panel = document.getElementById('info-panel');
+        panel.style.display = 'block';
         document.getElementById('land-title').innerText = item.name;
         document.getElementById('land-cap').innerText = item.cap;
         document.getElementById('land-count').innerText = item.count;
-        
-        const listDiv = document.getElementById('bezirke-list');
-        listDiv.innerHTML = item.list.map(b => `<span>• ${b}</span>`).join('');
+        document.getElementById('bezirke-list').innerHTML = item.list.map(b => `<span style="font-size:0.9rem; opacity:0.8;">• ${b}</span>`).join('');
     }
 
-    // YOUTUBE & LOADER LOGIK
+    // YouTube API
     var player;
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     document.getElementsByTagName('script')[0].parentNode.insertBefore(tag, null);
-
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
             height: '100%', width: '100%', videoId: 'Zn1S3RtGpWs',
@@ -198,7 +259,7 @@
     window.onload = () => {
         let w = 0;
         let int = setInterval(() => {
-            w += 20;
+            w += 25;
             document.getElementById('l-bar').style.width = w + '%';
             if(w >= 100) {
                 clearInterval(int);
@@ -222,27 +283,11 @@
         document.getElementById('decision-gui').style.display = 'none';
         let main = document.getElementById('main-content');
         main.style.display = 'block';
-        setTimeout(() => { 
-            main.style.opacity = '1'; 
-            animateValue("count1", 0, 9120000, 2000); 
-        }, 50);
+        setTimeout(() => { main.style.opacity = '1'; }, 50);
     }
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
-    
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
-
-    function animateValue(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('de-AT');
-            if (progress < 1) window.requestAnimationFrame(step);
-        };
-        window.requestAnimationFrame(step);
-    }
 </script>
 
 </body>
