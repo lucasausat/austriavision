@@ -3,323 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AUSTRIAVISION // EXTENDED PROTOCOL V3.5</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@300&display=swap" rel="stylesheet">
+    <title>Republik Österreich | Digitales Informationsportal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --at-red: #ff0015; 
-            --at-red-glow: rgba(255, 0, 21, 0.4);
-            --led-blue: #00f2ff;
-            --deep-black: #020202;
-            --panel-bg: rgba(15, 15, 15, 0.9);
-            --border-glow: 0 0 20px var(--at-red-glow);
-            --text-gray: #a0a0a0;
+            --oe-red: #ed2939; /* Offizielles Österreich-Rot */
+            --oe-dark-red: #c01c2a;
+            --bg-light: #f8f9fa;
+            --text-main: #1a1a1a;
+            --text-muted: #6c757d;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background: var(--deep-black);
             font-family: 'Inter', sans-serif;
-            color: #ffffff;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 50% 50%, #1a0505 0%, var(--deep-black) 80%),
-                linear-gradient(var(--at-red-glow) 1px, transparent 1px),
-                linear-gradient(90deg, var(--at-red-glow) 1px, transparent 1px);
-            background-size: 100% 100%, 60px 60px, 60px 60px;
-            background-attachment: fixed;
         }
 
-        /* SCANLINE & NOISE OVERLAY */
-        .overlay {
+        /* --- HAMMER GEILER LOADER --- */
+        #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            background-size: 100% 4px;
-            z-index: 9999; pointer-events: none; opacity: 0.3;
+            background: #fff; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease-in-out;
         }
-
-        /* CUSTOM CURSOR */
-        #c-main { position: fixed; pointer-events: none; z-index: 100000; mix-blend-mode: screen; }
-        .c-point { width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 20px var(--at-red); position: absolute; transform: translate(-50%, -50%); }
-        .c-cross { 
-            position: absolute; width: 50px; height: 50px; 
-            border: 1px solid var(--at-red); border-radius: 2px;
-            transform: translate(-50%, -50%) rotate(45deg); transition: 0.08s ease-out;
+        .loader-bar-container {
+            width: 200px; height: 4px; background: #eee;
+            margin-top: 20px; position: relative; overflow: hidden;
+            border-radius: 2px;
         }
+        .loader-bar {
+            width: 0%; height: 100%; background: var(--oe-red);
+            transition: width 0.4s ease;
+        }
+        .loader-logo {
+            font-weight: 800; font-size: 1.5rem; letter-spacing: -1px;
+        }
+        .loader-logo span { color: var(--oe-red); }
 
-        /* HUD NAVIGATION */
+        /* --- NAVIGATION --- */
         nav {
-            position: fixed; top: 0; width: 100%; height: 70px;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 4%; z-index: 5000;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--at-red);
-            box-shadow: 0 5px 30px rgba(255,0,0,0.2);
+            background: #fff; padding: 20px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 3px solid var(--oe-red);
+            position: sticky; top: 0; z-index: 1000;
         }
-        .brand { font-family: 'Orbitron'; font-weight: 900; letter-spacing: 8px; font-size: 1.2rem; }
-        .brand span { color: var(--at-red); text-shadow: 0 0 10px var(--at-red); }
+        .logo { font-weight: 800; font-size: 1.2rem; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem; }
 
-        .sys-info { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--at-red); text-align: right; }
-
-        /* HERO HEADER */
+        /* --- HERO SECTION --- */
         header {
-            height: 110vh; display: flex; flex-direction: column; 
-            align-items: center; justify-content: center;
-            text-align: center; position: relative;
+            padding: 100px 5%; background: #fff;
+            border-bottom: 1px solid #eee;
         }
-        .glitch-wrapper { position: relative; }
-        .main-title {
-            font-family: 'Orbitron'; font-size: 15vw; font-weight: 900;
-            line-height: 0.8; letter-spacing: -10px;
-            background: linear-gradient(to bottom, #fff, #333);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px var(--at-red-glow));
-        }
-        .hero-stats {
-            margin-top: 30px; font-family: 'JetBrains Mono'; color: var(--at-red);
-            letter-spacing: 5px; font-size: 0.9rem; text-transform: uppercase;
+        .hero-content { max-width: 800px; }
+        h1 { font-size: 4rem; font-weight: 800; margin-bottom: 20px; color: #000; }
+        .badge {
+            display: inline-block; padding: 5px 12px; background: var(--oe-red);
+            color: #fff; font-size: 0.7rem; font-weight: 700; border-radius: 3px; margin-bottom: 15px;
         }
 
-        /* SECTIONS */
-        .section-label {
-            padding: 100px 5% 20px 5%; font-family: 'Orbitron';
-            font-size: 0.8rem; color: var(--at-red); letter-spacing: 10px;
-            display: flex; align-items: center; gap: 20px;
-        }
-        .section-label::after { content: ""; height: 1px; flex: 1; background: var(--at-red); opacity: 0.3; }
-
-        /* DISTRICT GRID */
-        .grid-container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 40px; padding: 40px 5% 100px 5%;
+        /* --- BUNDESLÄNDER GRID --- */
+        .section-title { padding: 60px 5% 20px; font-size: 1.8rem; font-weight: 800; }
+        
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px; padding: 0 5% 80px;
         }
 
         .card {
-            background: var(--panel-bg);
-            border: 1px solid rgba(255,255,255,0.05);
-            padding: 40px; position: relative; transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-            overflow: hidden;
+            background: #fff; border-radius: 12px; padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            border: 1px solid #eee; transition: transform 0.3s ease;
         }
-        .card:hover {
-            border-color: var(--at-red);
-            transform: translateY(-15px);
-            box-shadow: 0 20px 50px rgba(255,0,0,0.1);
-        }
-        .card::before {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--at-red), transparent);
-            transform: translateX(-100%); transition: 0.6s;
-        }
-        .card:hover::before { transform: translateX(100%); }
+        .card:hover { transform: translateY(-5px); border-color: var(--oe-red); }
+        .card h3 { margin-bottom: 10px; font-size: 1.4rem; }
+        .card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 15px; }
+        .stat-line { font-size: 0.8rem; font-weight: 600; color: var(--oe-red); }
 
-        .card-id { font-family: 'JetBrains Mono'; font-size: 0.65rem; color: var(--at-red); margin-bottom: 20px; display: block; }
-        .card h2 { font-family: 'Orbitron'; font-size: 2.2rem; margin-bottom: 20px; letter-spacing: 2px; }
-        .card p { font-size: 0.9rem; color: var(--text-gray); line-height: 1.8; margin-bottom: 20px; }
-
-        .led-tag {
-            display: inline-block; padding: 4px 10px; border: 1px solid var(--at-red);
-            font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--at-red);
-            text-transform: uppercase; margin-right: 10px;
+        /* --- REAL DATA SECTION --- */
+        .stats-bar {
+            background: var(--text-main); color: #fff; padding: 60px 5%;
+            display: flex; justify-content: space-around; flex-wrap: wrap; text-align: center;
         }
+        .stat-item h2 { font-size: 2.5rem; color: var(--oe-red); }
+        .stat-item p { font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; }
 
-        /* DATA SECTION */
-        .data-visual {
-            padding: 100px 5%; background: rgba(255,0,0,0.02);
-            display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px;
-        }
-        .data-box {
-            border: 1px solid #222; padding: 30px; text-align: center;
-        }
-        .data-num { font-family: 'Orbitron'; font-size: 3.5rem; display: block; color: #fff; text-shadow: 0 0 15px var(--at-red); }
-        .data-label { font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--at-red); letter-spacing: 3px; }
-
-        /* FOOTER */
         footer {
-            padding: 80px 5%; border-top: 1px solid #111;
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: 'JetBrains Mono'; font-size: 0.6rem; color: #444;
+            padding: 40px 5%; background: #eee; text-align: center;
+            font-size: 0.8rem; color: #666;
         }
 
         @media (max-width: 768px) {
-            .main-title { font-size: 20vw; }
-            .grid-container { grid-template-columns: 1fr; }
-            .data-visual { grid-template-columns: 1fr; }
+            h1 { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-<div class="overlay"></div>
-
-<div id="c-main">
-    <div class="c-point"></div>
-    <div class="c-cross" id="cross"></div>
+<div id="loader">
+    <div class="loader-logo">REPUBLIK <span>ÖSTERREICH</span></div>
+    <div class="loader-bar-container">
+        <div class="loader-bar" id="l-bar"></div>
+    </div>
+    <p style="font-size: 0.7rem; margin-top: 10px; color: #999;">SYSTEME WERDEN INITIALISIERT...</p>
 </div>
 
 <nav>
-    <div class="brand">AUSTRIA<span>VISION</span></div>
-    <div class="sys-info">
-        CORE_LOAD: 94% | UPTIME: 244:12:09<br>
-        <span id="live-clock">00:00:00</span>
+    <div class="logo">ÖSTERREICH<span>.gv.at</span></div>
+    <div class="nav-links">
+        <a href="#">Bürgerservice</a>
+        <a href="#">Wirtschaft</a>
+        <a href="#">Tourismus</a>
     </div>
 </nav>
 
 <header>
-    <div class="glitch-wrapper">
-        <h1 class="main-title">ÖSTER<br>REICH</h1>
+    <div class="hero-content">
+        <div class="badge">OFFIZIELLES PORTAL</div>
+        <h1>Servus in Österreich.</h1>
+        <p>Informationen der Bundesregierung, Echtzeit-Daten aus den neun Bundesländern und digitale Services für Bürgerinnen und Bürger.</p>
     </div>
-    <div class="hero-stats">Terminal Access // Protocol 3.5 // 2026-ACTIVE</div>
-    <div style="margin-top: 50px; width: 1px; height: 100px; background: linear-gradient(to bottom, var(--at-red), transparent);"></div>
 </header>
 
-<div class="section-label">REGIONALE_DATEN_KNOTEN</div>
+<div class="section-title">Die Bundesländer im Überblick</div>
 
-<section class="grid-container">
+<section class="grid">
     <div class="card">
-        <span class="card-id">NODE_01 // SEC_CAP</span>
-        <h2>WIEN</h2>
-        <div class="led-tag">Imperial Core</div><div class="led-tag">Data Hub</div>
-        <p>Das primäre Betriebssystem der Republik. In Wien kreuzen sich alle transkontinentalen Glasfaserkabel und historischen Zeitlinien. Verwaltung der Sektoren 1-23 unter striktem Cyber-Protokoll.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: VIBRANT / HIGH_TRAFFIC</div>
+        <h3>Wien</h3>
+        <p>Bundeshauptstadt und Zentrum der Verwaltung. Höchste Lebensqualität weltweit.</p>
+        <div class="stat-line">EW: ~1,98 Mio. | Fläche: 414 km²</div>
     </div>
-
     <div class="card">
-        <span class="card-id">NODE_02 // AGRI_NET</span>
-        <h2>NÖ</h2>
-        <div class="led-tag">Surrounding Grid</div>
-        <p>Der größte Flächensektor. Fungiert als biologischer Speicher und primärer Energielieferant. Die Donau-Pipeline sichert den konstanten Daten- und Güterfluss zwischen den Ost-West-Knoten.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: STABLE / RESOURCE_SYNC</div>
+        <h3>Niederösterreich</h3>
+        <p>Das größte Bundesland. Bedeutendster Agrar- und Wirtschaftsraum um die Hauptstadt.</p>
+        <div class="stat-line">EW: ~1,72 Mio. | Landeshauptstadt: St. Pölten</div>
     </div>
-
     <div class="card">
-        <span class="card-id">NODE_03 // INDUSTRY</span>
-        <h2>OÖ</h2>
-        <div class="led-tag">Steel Forge</div><div class="led-tag">Tech Core</div>
-        <p>Das industrielle Herz. Hier wird der digitale Stahl geschmiedet. Hochpräzise Fertigungsalgorithmen steuern die Export-Matrix. Fokus auf Robotik und schwere Hardware-Entwicklung.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: ACTIVE / HIGH_OUTPUT</div>
+        <h3>Oberösterreich</h3>
+        <p>Industrieller Motor Österreichs mit Fokus auf Maschinenbau und Technologie.</p>
+        <div class="stat-line">EW: ~1,52 Mio. | BIP-Anteil: Spitzenreiter</div>
     </div>
-
     <div class="card">
-        <span class="card-id">NODE_04 // AUDIO_SYS</span>
-        <h2>SALZBURG</h2>
-        <div class="led-tag">Soundscape</div><div class="led-tag">Citadel</div>
-        <p>Akustische Signalverarbeitung auf höchstem Niveau. Die Festung fungiert als massiver Firewall-Knotenpunkt. Kulturelle Frequenzen werden hier global synchronisiert.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: HARMONIC / SECURE</div>
+        <h3>Steiermark</h3>
+        <p>Das "Grüne Herz". Zentrum für Innovation, Forschung und exzellenten Weinbau.</p>
+        <div class="stat-line">EW: ~1,26 Mio. | F&E Quote: >5%</div>
     </div>
-
     <div class="card">
-        <span class="card-id">NODE_05 // BIO_PROCESS</span>
-        <h2>STMK</h2>
-        <div class="led-tag">Green Engine</div>
-        <p>Forschungszentrum für regenerative Systeme. Der "Grüne Algorithmus" optimiert die Symbiose zwischen Wald-Matrix und urbaner Expansion. Wichtiger Knoten für Automotive-Intelligence.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: OPTIMIZING / GREEN_SYNC</div>
+        <h3>Tirol</h3>
+        <p>Zentrum des alpinen Tourismus und wichtiger Transitknotenpunkt in Europa.</p>
+        <div class="stat-line">EW: ~770.000 | Höchster Berg: Ortler (historisch) / Großglockner</div>
     </div>
-
     <div class="card">
-        <span class="card-id">NODE_06 // ALPINE_SHIELD</span>
-        <h2>TIROL</h2>
-        <div class="led-tag">High Altitude</div>
-        <p>Vertikale Verteidigungs-Strukturen. Überwachung der alpinen Wetter-Pattern und Schutz der kryogenen Wasserspeicher. Das Herz der Tourismus-Simulation.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: FROZEN / STABLE</div>
+        <h3>Salzburg</h3>
+        <p>Weltberühmt für Festspiele und eine starke Wirtschaftsachse Richtung Norden.</p>
+        <div class="stat-line">EW: ~568.000 | UNESCO Welterbe</div>
     </div>
-
     <div class="card">
-        <span class="card-id">NODE_07 // AQUA_DATA</span>
-        <h2>KÄRNTEN</h2>
-        <div class="led-tag">Liquid Grid</div>
-        <p>Verwaltung der südlichen Beckenstrukturen. Fokus auf hydro-elektrische Energie und grenzüberschreitende Daten-Relais in den Adria-Sektor.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: FLOWING / COOLING</div>
+        <h3>Kärnten</h3>
+        <p>Südlichstes Bundesland, bekannt für Seenreichtum und Mikroelektronik-Standorte.</p>
+        <div class="stat-line">EW: ~566.000 | Grenzregion zu Italien/Slowenien</div>
     </div>
-
     <div class="card">
-        <span class="card-id">NODE_08 // MICRO_CHIP</span>
-        <h2>VBG</h2>
-        <div class="led-tag">Precision</div><div class="led-tag">Gateway</div>
-        <p>Hochspezialisierte Micro-Engineering-Cluster. Kleinste Bauweise bei maximaler Effizienz. Schnittstelle zum globalen High-Tech-Sektor West.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: CONNECTED / PRECISE</div>
+        <h3>Vorarlberg</h3>
+        <p>Hochspezialisierte Exportindustrie und Pionier in moderner Holzarchitektur.</p>
+        <div class="stat-line">EW: ~406.000 | Höchste Industriedichte</div>
     </div>
-
     <div class="card">
-        <span class="card-id">NODE_09 // WIND_POWER</span>
-        <h2>BGLD</h2>
-        <div class="led-tag">Solar Flux</div><div class="led-tag">Wind Grid</div>
-        <p>Das solare Kraftwerk der Republik. Weite Ebenen optimiert für Wind-Ernte und photonische Konvertierung. Pannonische Daten-Ebene aktiv.</p>
-        <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--led-blue);">STATUS: RADIANT / ENERGY_MAX</div>
+        <h3>Burgenland</h3>
+        <p>Pionier bei erneuerbaren Energien und Brücke zum pannonischen Raum.</p>
+        <div class="stat-line">EW: ~301.000 | 100% Ökostrom-Eigenversorgung</div>
     </div>
 </section>
 
-<div class="section-label">SYSTEM_METRIKEN</div>
-
-<section class="data-visual">
-    <div class="data-box">
-        <span class="data-num">8.95M</span>
-        <span class="data-label">VERNETZTE_BÜRGER</span>
+<section class="stats-bar">
+    <div class="stat-item">
+        <h2 id="counter1">0</h2>
+        <p>Einwohner</p>
     </div>
-    <div class="data-box">
-        <span class="data-num">2.6k</span>
-        <span class="data-label">GIGAWATT_PEAK</span>
+    <div class="stat-item">
+        <h2 id="counter2">0</h2>
+        <p>Gemeinden</p>
     </div>
-    <div class="data-box">
-        <span class="data-num">100%</span>
-        <span class="data-label">SYSTEM_INTEGRITÄT</span>
+    <div class="stat-item">
+        <h2>3.798m</h2>
+        <p>Höchster Punkt</p>
     </div>
 </section>
 
 <footer>
-    <div>AUSTRIAVISION_OS // VER 3.5.0</div>
-    <div>(C) 2026 REPUBLIK ÖSTERREICH // DIGITAL DEFENSE UNIT</div>
-    <div>LOC: 48.2082 N, 16.3738 E</div>
+    &copy; 2026 Bundeskanzleramt Österreich | <a href="#" style="color: #666;">Impressum</a> | <a href="#" style="color: #666;">Datenschutz</a>
 </footer>
 
 <script>
-    const cross = document.getElementById('cross');
-    const dot = document.querySelector('.c-point');
-    let mx = 0, my = 0;
-
-    // Smooth Cursor
-    window.addEventListener('mousemove', e => {
-        mx = e.clientX;
-        my = e.clientY;
-        dot.style.left = mx + 'px';
-        dot.style.top = my + 'px';
-        
-        // Follow effect
-        setTimeout(() => {
-            cross.style.left = mx + 'px';
-            cross.style.top = my + 'px';
-        }, 30);
+    // Realistischer Loader
+    window.addEventListener('load', () => {
+        const bar = document.getElementById('l-bar');
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loader').style.display = 'none';
+                        startCounters();
+                    }, 800);
+                }, 200);
+            } else {
+                width += Math.random() * 30;
+                if (width > 100) width = 100;
+                bar.style.width = width + '%';
+            }
+        }, 150);
     });
 
-    // Clock Logic
-    function updateTime() {
-        const now = new Date();
-        const timeStr = now.getHours().toString().padStart(2, '0') + ":" + 
-                        now.getMinutes().toString().padStart(2, '0') + ":" + 
-                        now.getSeconds().toString().padStart(2, '0');
-        document.getElementById('live-clock').innerText = timeStr;
+    // Zähler Animation für echte Daten
+    function startCounters() {
+        animateValue("counter1", 0, 9104772, 2000); // Aktuelle EW Zahl ca.
+        animateValue("counter2", 0, 2093, 2000);    // Anzahl Gemeinden
     }
-    setInterval(updateTime, 1000);
 
-    // Parallax & Card Animation
-    window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        document.body.style.backgroundPositionY = -(scrolled * 0.2) + 'px';
-    });
-
-    // Interaction Feedback
-    document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('mouseenter', () => {
-            cross.style.width = '70px';
-            cross.style.height = '70px';
-            cross.style.borderColor = '#fff';
-        });
-        card.addEventListener('mouseleave', () => {
-            cross.style.width = '50px';
-            cross.style.height = '50px';
-            cross.style.borderColor = 'var(--at-red)';
-        });
-    });
+    function animateValue(id, start, end, duration) {
+        const obj = document.getElementById(id);
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('de-AT');
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
 </script>
 
 </body>
