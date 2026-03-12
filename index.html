@@ -3,177 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Republik Österreich | Digitales Informationsportal</title>
+    <title>Österreich | Mein Projekt</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --oe-red: #ed2939;
-            --oe-dark-red: #c01c2a;
             --bg-light: #f8f9fa;
             --text-main: #1a1a1a;
-            --text-muted: #6c757d;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); overflow-x: hidden; }
 
-        /* --- 1. LOADER --- */
+        /* --- LOADER --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 10000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease-in-out;
+            background: #fff; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .loader-bar-container { width: 200px; height: 4px; background: #eee; margin-top: 20px; overflow: hidden; border-radius: 2px; }
         .loader-bar { width: 0%; height: 100%; background: var(--oe-red); transition: width 0.4s ease; }
 
-        /* --- 2. VIDEO INTRO --- */
+        /* --- MODERNE FRAGEN GUI --- */
+        #decision-gui {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9500; display: none;
+            align-items: center; justify-content: center; text-align: center; color: white;
+        }
+        .gui-box { background: #fff; color: #000; padding: 40px; border-radius: 15px; max-width: 400px; }
+        .gui-btn { 
+            display: block; width: 100%; padding: 15px; margin: 10px 0; 
+            border: none; border-radius: 5px; cursor: pointer; font-weight: 700; transition: 0.3s;
+        }
+        .btn-video { background: var(--oe-red); color: white; }
+        .btn-direct { background: #eee; color: #000; }
+
+        /* --- VIDEO LAYER --- */
         #video-intro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9000; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-            transition: opacity 0.8s ease;
+            background: #000; z-index: 9000; display: none; flex-direction: column; align-items: center; justify-content: center;
         }
-        .video-wrapper { width: 90%; max-width: 1100px; aspect-ratio: 16/9; background: #111; position: relative; }
-        .skip-btn {
-            margin-top: 20px; padding: 12px 30px; background: var(--oe-red);
-            color: white; border: none; font-weight: 700; cursor: pointer;
-            border-radius: 5px; transition: 0.3s; text-transform: uppercase;
-        }
-        .skip-btn:hover { background: var(--oe-dark-red); transform: scale(1.05); }
+        .video-wrapper { width: 90%; max-width: 1000px; aspect-ratio: 16/9; }
 
-        /* --- 3. WEBSITE CONTENT --- */
-        #main-content { opacity: 0; transition: opacity 1.5s ease; }
-        
-        nav { background: #fff; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-weight: 800; font-size: 1.2rem; }
+        /* --- WEBSITE CONTENT --- */
+        #main-content { display: none; opacity: 0; transition: opacity 1s ease; }
+        nav { background: #fff; padding: 20px 5%; display: flex; justify-content: space-between; border-bottom: 3px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-weight: 800; }
         .logo span { color: var(--oe-red); }
-        .nav-links a { margin-left: 20px; text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.9rem; }
 
-        header { padding: 100px 5%; background: #fff; border-bottom: 1px solid #eee; }
-        h1 { font-size: 4rem; font-weight: 800; margin-bottom: 20px; }
-        .badge { display: inline-block; padding: 5px 12px; background: var(--oe-red); color: #fff; font-size: 0.7rem; font-weight: 700; border-radius: 3px; margin-bottom: 15px; }
+        header { padding: 80px 5%; text-align: center; }
+        
+        /* --- DATEN WECHSEL SEKTION --- */
+        .toggle-section { padding: 40px 5%; text-align: center; }
+        .book-icon { font-size: 50px; cursor: pointer; transition: 0.3s; display: inline-block; }
+        .book-icon:hover { transform: scale(1.2); color: var(--oe-red); }
+        
+        #region-data { display: none; margin-top: 30px; } /* Bundesländer */
+        #general-data { margin-top: 30px; } /* Allgemeine Daten */
 
-        .section-title { padding: 60px 5% 20px; font-size: 1.8rem; font-weight: 800; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; padding: 0 5% 80px; }
-        .card { background: #fff; border-radius: 12px; padding: 30px; border: 1px solid #eee; transition: 0.3s ease; }
-        .card:hover { transform: translateY(-5px); border-color: var(--oe-red); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #ddd; }
 
-        .stats-bar { background: var(--text-main); color: #fff; padding: 60px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; text-align: center; }
-        .stat-item h2 { font-size: 2.5rem; color: var(--oe-red); }
+        .stats-bar { background: #1a1a1a; color: #fff; padding: 40px; display: flex; justify-content: space-around; }
+        .stat-item h2 { color: var(--oe-red); font-size: 2.5rem; }
 
-        footer { padding: 40px 5%; background: #eee; text-align: center; font-size: 0.8rem; color: #666; }
+        footer { padding: 30px; background: #eee; text-align: center; font-size: 0.8rem; color: #555; border-top: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
 <div id="loader">
-    <div class="loader-logo">REPUBLIK <span>ÖSTERREICH</span></div>
+    <div style="font-weight: 800; font-size: 1.5rem;">ÖSTERREICH <span>PROJEKT</span></div>
     <div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
+</div>
+
+<div id="decision-gui">
+    <div class="gui-box">
+        <h2>Willkommen</h2>
+        <p style="margin-bottom: 20px;">Möchtest du das Video-Intro sehen oder direkt zum Portal?</p>
+        <button class="gui-btn btn-video" onclick="startWithVideo()">🎬 Intro mit Sound</button>
+        <button class="gui-btn btn-direct" onclick="exitVideo()">➡️ Direkt zum Portal</button>
+    </div>
 </div>
 
 <div id="video-intro">
     <div class="video-wrapper">
-        <iframe id="yt-player" width="100%" height="100%" 
-            src="https://www.youtube.com/embed/Zn1S3RtGpWs?enablejsapi=1&autoplay=0&mute=0&controls=1" 
-            title="Österreich Video" frameborder="0" 
-            allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-        </iframe>
+        <div id="player"></div>
     </div>
-    <button class="skip-btn" onclick="exitVideo()">Intro überspringen & Portal öffnen</button>
+    <button class="gui-btn" style="width: 200px; background: white;" onclick="exitVideo()">Überspringen</button>
 </div>
 
 <div id="main-content">
     <nav>
-        <div class="logo">ÖSTERREICH<span>.gv.at</span></div>
-        <div class="nav-links">
-            <a href="https://www.oesterreich.gv.at" target="_blank">Bürgerservice</a>
-            <a href="https://www.wko.at" target="_blank">Wirtschaft</a>
-            <a href="https://www.austria.info" target="_blank">Tourismus</a>
-        </div>
+        <div class="logo">ÖSTERREICH<span>.vlog</span></div>
+        <div style="font-size: 0.8rem; font-weight: 600;">Privates Web-Projekt</div>
     </nav>
 
     <header>
-        <div class="hero-content">
-            <div class="badge">OFFIZIELLES PORTAL</div>
-            <h1>Servus in Österreich.</h1>
-            <p>Informationen der Bundesregierung, Echtzeit-Daten aus den neun Bundesländern und digitale Services für Bürgerinnen und Bürger.</p>
-        </div>
+        <h1>Entdecke die Republik.</h1>
+        <p>Ein interaktives Informationsportal über Österreich.</p>
     </header>
 
-    <div class="section-title">Regionen & Daten-Knoten</div>
-    <section class="grid">
-        <div class="card">
-            <h3>Wien</h3>
-            <p>Bundeshauptstadt und Zentrum der Verwaltung. Höchste Lebensqualität weltweit.</p>
-            <div class="stat-line">EW: ~1,98 Mio. | Fläche: 414 km²</div>
+    <section class="toggle-section">
+        <div class="book-icon" onclick="toggleData()" title="Klicke um zwischen Bundesländer und Fakten zu wechseln">📖</div>
+        <p id="toggle-label">Klicke auf das Buch, um die Bundesländer anzuzeigen!</p>
+
+        <div id="general-data">
+            <h2>Wusstest du schon?</h2>
+            <div class="grid">
+                <div class="card"><h3>Nachhaltigkeit</h3><p>Über 75% des Stroms kommen aus erneuerbaren Energien.</p></div>
+                <div class="card"><h3>Berge</h3><p>Österreich hat fast 7.000 Gipfel über 2.000 Meter.</p></div>
+                <div class="card"><h3>Kultur</h3><p>Wien wurde mehrfach als lebenswerteste Stadt der Welt ausgezeichnet.</p></div>
+            </div>
         </div>
-        <div class="card">
-            <h3>Oberösterreich</h3>
-            <p>Industrieller Motor Österreichs mit Fokus auf Technologie.</p>
-            <div class="stat-line">EW: ~1,52 Mio. | BIP-Anteil: Spitzenreiter</div>
+
+        <div id="region-data">
+            <h2>Die 9 Bundesländer</h2>
+            <div class="grid">
+                <div class="card"><h3>Wien</h3><p>Kultur & Verwaltung</p></div>
+                <div class="card"><h3>Tirol</h3><p>Alpen & Tourismus</p></div>
+                <div class="card"><h3>Salzburg</h3><p>Musik & Natur</p></div>
+                </div>
         </div>
-        </section>
+    </section>
 
     <section class="stats-bar">
-        <div class="stat-item"><h2 id="counter1">0</h2><p>Einwohner</p></div>
-        <div class="stat-item"><h2 id="counter2">0</h2><p>Gemeinden</p></div>
-        <div class="stat-item"><h2>3.798m</h2><p>Höchster Punkt</p></div>
+        <div class="stat-item"><h2 id="count1">0</h2><p>Einwohner</p></div>
+        <div class="stat-item"><h2>2.093</h2><p>Gemeinden</p></div>
     </section>
 
     <footer>
-        &copy; 2026 Bundeskanzleramt Österreich | <a href="#">Impressum</a> | <a href="#">Datenschutz</a>
+        &copy; 2026 Erstellt von [Dein Name] | 16 Jahre | Dies ist ein privates Projekt und keine offizielle Regierungsseite.
     </footer>
 </div>
 
 <script>
-    // 1. LOADER LOGIK
-    window.addEventListener('load', () => {
-        const bar = document.getElementById('l-bar');
-        let width = 0;
-        const interval = setInterval(() => {
-            if (width >= 100) {
-                clearInterval(interval);
+    var player;
+    var tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '100%',
+            width: '100%',
+            videoId: 'Zn1S3RtGpWs',
+            playerVars: { 'autoplay': 0, 'controls': 1, 'vq': 'hd2160' },
+            events: { 'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) exitVideo(); } }
+        });
+    }
+
+    // LOADER START
+    window.onload = () => {
+        let bar = document.getElementById('l-bar');
+        let w = 0;
+        let int = setInterval(() => {
+            w += Math.random() * 25;
+            if(w >= 100) {
+                clearInterval(int);
                 setTimeout(() => {
-                    document.getElementById('loader').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('loader').style.display = 'none';
-                        startVideo();
-                    }, 800);
-                }, 200);
-            } else {
-                width += Math.random() * 30;
-                if (width > 100) width = 100;
-                bar.style.width = width + '%';
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('decision-gui').style.display = 'flex';
+                }, 500);
             }
+            bar.style.width = w + '%';
         }, 150);
-    });
+    };
 
-    // 2. VIDEO STARTEN
-    function startVideo() {
-        const videoIntro = document.getElementById('video-intro');
-        videoIntro.style.display = 'flex';
-        // Autoplay-Trigger (funktioniert meist nur, wenn der User vorher geklickt hat)
-        document.getElementById('yt-player').src += "&autoplay=1";
+    function startWithVideo() {
+        document.getElementById('decision-gui').style.display = 'none';
+        document.getElementById('video-intro').style.display = 'flex';
+        player.unMute();
+        player.playVideo();
     }
 
-    // 3. VIDEO BEENDEN & WEBSITE ZEIGEN
     function exitVideo() {
-        const videoIntro = document.getElementById('video-intro');
-        const mainContent = document.getElementById('main-content');
-        
-        videoIntro.style.opacity = '0';
-        setTimeout(() => {
-            videoIntro.style.display = 'none';
-            mainContent.style.opacity = '1';
-            startCounters();
-        }, 800);
+        if(player) player.stopVideo();
+        document.getElementById('video-intro').style.display = 'none';
+        document.getElementById('decision-gui').style.display = 'none';
+        let main = document.getElementById('main-content');
+        main.style.display = 'block';
+        setTimeout(() => { 
+            main.style.opacity = '1'; 
+            animateValue("count1", 0, 9104772, 2000);
+        }, 50);
     }
 
-    // Zähler Animation
-    function startCounters() {
-        animateValue("counter1", 0, 9104772, 2500);
-        animateValue("counter2", 0, 2093, 2000);
+    // TOGGLE DATEN (BUCH)
+    let showRegions = false;
+    function toggleData() {
+        showRegions = !showRegions;
+        document.getElementById('general-data').style.display = showRegions ? 'none' : 'block';
+        document.getElementById('region-data').style.display = showRegions ? 'block' : 'none';
+        document.getElementById('toggle-label').innerText = showRegions ? "Hier sind die Bundesländer!" : "Klicke auf das Buch für Bundesländer.";
     }
 
     function animateValue(id, start, end, duration) {
