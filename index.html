@@ -3,274 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Österreich | Vision Info-Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
-
+    <title>Österreich | Mein Projekt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --oe-red: #ed2939;
-            --oe-red-glow: rgba(237, 41, 57, 0.6);
-            --bg-light: #f4f7f6;
+            --bg-light: #f8f9fa;
             --text-main: #1a1a1a;
-            --card-bg: rgba(255, 255, 255, 0.7);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); overflow-x: hidden; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #0d0d0d;
-            color: #f0f0f0;
-            overflow-x: hidden;
-        }
-
-        /* LOADER STYLES */
+        /* --- LOADER --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; display: flex; align-items: center; justify-content: center;
-            flex-direction: column; z-index: 5000; transition: opacity 0.8s;
+            background: #fff; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
+        .loader-bar-container { width: 200px; height: 4px; background: #eee; margin-top: 20px; overflow: hidden; border-radius: 2px; }
+        .loader-bar { width: 0%; height: 100%; background: var(--oe-red); transition: width 0.4s ease; }
 
-        .loader-content { text-align: center; }
-
-        .loader-title {
-            font-family: 'Orbitron';
-            font-size: 1.8rem;
-            letter-spacing: 8px;
-            margin-bottom: 20px;
-            color: #fff;
-            text-shadow: 0 0 15px var(--oe-red-glow);
-            animation: pulse 2s infinite;
+        /* --- MODERNE FRAGEN GUI --- */
+        #decision-gui {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 9500; display: none;
+            align-items: center; justify-content: center; text-align: center; color: white;
         }
-
-        .l-bar-wrap { 
-            width: 300px; height: 4px; background: #222; 
-            border-radius: 10px; overflow: hidden; position: relative;
+        .gui-box { background: #fff; color: #000; padding: 40px; border-radius: 15px; max-width: 400px; }
+        .gui-btn { 
+            display: block; width: 100%; padding: 15px; margin: 10px 0; 
+            border: none; border-radius: 5px; cursor: pointer; font-weight: 700; transition: 0.3s;
         }
+        .btn-video { background: var(--oe-red); color: white; }
+        .btn-direct { background: #eee; color: #000; }
 
-        #l-bar { 
-            width: 0%; height: 100%; background: var(--oe-red); 
-            box-shadow: 0 0 15px var(--oe-red);
-            transition: width 0.3s cubic-bezier(0.1, 0.5, 0.5, 1); 
-        }
-
-        #l-percent {
-            font-family: 'Orbitron'; font-size: 0.8rem; color: var(--oe-red);
-            margin-top: 10px; letter-spacing: 2px;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.6; transform: scale(0.98); }
-            50% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0.6; transform: scale(0.98); }
-        }
-
+        /* --- VIDEO LAYER --- */
         #video-intro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; background: black; z-index: 4000;
+            background: #000; z-index: 9000; display: none; flex-direction: column; align-items: center; justify-content: center;
         }
-        .video-wrapper { width: 100%; height: 100%; }
-        
-        .skip-btn {
-            position: absolute; bottom: 40px; right: 40px;
-            background: var(--oe-red); color: white; border: none;
-            padding: 15px 25px; border-radius: 8px; cursor: pointer;
-            font-family: 'Orbitron'; font-size: 0.9rem; z-index: 4001;
-            box-shadow: 0 0 20px var(--oe-red-glow); transition: 0.2s;
-        }
-        .skip-btn:hover { transform: scale(1.05); background: #ff2e3d; }
+        .video-wrapper { width: 90%; max-width: 1000px; aspect-ratio: 16/9; }
 
-        #main-content { opacity: 0; transition: opacity 1s; background: var(--bg-light); color: var(--text-main); min-height: 100vh; }
-        .glass { backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); background: var(--card-bg); }
-
-        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--oe-red); background: white; }
-        .logo { font-weight: 800; font-family: 'Orbitron'; color: #000; }
+        /* --- WEBSITE CONTENT --- */
+        #main-content { display: none; opacity: 0; transition: opacity 1s ease; }
+        nav { background: #fff; padding: 20px 5%; display: flex; justify-content: space-between; border-bottom: 3px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-weight: 800; }
         .logo span { color: var(--oe-red); }
 
-        .stats-bar { display: flex; justify-content: center; gap: 30px; padding: 40px 5%; flex-wrap: wrap; }
-        .stat-card { padding: 20px 40px; border-radius: 15px; text-align: center; min-width: 250px; }
-        .stat-card h2 { color: var(--oe-red); font-family: 'Orbitron'; font-size: 2rem; }
-
-        .land-path { fill: #ccc; stroke: #fff; stroke-width: 1.5; cursor: pointer; transition: .35s; }
-        .land-path:hover { fill: var(--oe-red); }
-
-        #info-panel { width: 90%; max-width: 800px; padding: 30px; margin: 30px auto; border-left: 8px solid var(--oe-red); border-radius: 15px; display: none; }
-        .bezirk-tag { display: inline-block; padding: 5px 12px; background: var(--oe-red); color: white; border-radius: 15px; margin: 5px; font-size: 0.8rem; }
+        header { padding: 80px 5%; text-align: center; }
         
-        footer { text-align: center; padding: 40px; font-size: 0.8rem; color: #666; }
+        /* --- DATEN WECHSEL SEKTION --- */
+        .toggle-section { padding: 40px 5%; text-align: center; }
+        .book-icon { font-size: 50px; cursor: pointer; transition: 0.3s; display: inline-block; }
+        .book-icon:hover { transform: scale(1.2); color: var(--oe-red); }
+        
+        #region-data { display: none; margin-top: 30px; } /* Bundesländer */
+        #general-data { margin-top: 30px; } /* Allgemeine Daten */
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #ddd; }
+
+        .stats-bar { background: #1a1a1a; color: #fff; padding: 40px; display: flex; justify-content: space-around; }
+        .stat-item h2 { color: var(--oe-red); font-size: 2.5rem; }
+
+        footer { padding: 30px; background: #eee; text-align: center; font-size: 0.8rem; color: #555; border-top: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
 <div id="loader">
-    <div class="loader-content">
-        <div class="loader-title">AUSTRIA VISION</div>
-        <div class="l-bar-wrap"><div id="l-bar"></div></div>
-        <div id="l-percent">0%</div>
+    <div style="font-weight: 800; font-size: 1.5rem;">ÖSTERREICH <span>PROJEKT</span></div>
+    <div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
+</div>
+
+<div id="decision-gui">
+    <div class="gui-box">
+        <h2>Willkommen</h2>
+        <p style="margin-bottom: 20px;">Möchtest du das Video-Intro sehen oder direkt zum Portal?</p>
+        <button class="gui-btn btn-video" onclick="startWithVideo()">🎬 Intro mit Sound</button>
+        <button class="gui-btn btn-direct" onclick="exitVideo()">➡️ Direkt zum Portal</button>
     </div>
 </div>
 
 <div id="video-intro">
-    <div class="video-wrapper"><div id="player"></div></div>
-    <button class="skip-btn" onclick="exitVideo()">ÜBERSPRINGEN</button>
+    <div class="video-wrapper">
+        <div id="player"></div>
+    </div>
+    <button class="gui-btn" style="width: 200px; background: white;" onclick="exitVideo()">Überspringen</button>
 </div>
 
 <div id="main-content">
     <nav>
-        <div class="logo">ÖSTERREICH<span>.VISION</span></div>
-        <div id="clock" style="font-family:'Orbitron';">00:00:00</div>
+        <div class="logo">ÖSTERREICH<span>.vlog</span></div>
+        <div style="font-size: 0.8rem; font-weight: 600;">Privates Web-Projekt</div>
     </nav>
 
-    <div class="stats-bar">
-        <div class="stat-card glass">
-            <small>EINWOHNER 2026</small>
-            <h2 id="counter1">0</h2>
-        </div>
-        <div class="stat-card glass">
-            <small>GEMEINDEN</small>
-            <h2 id="counter2">0</h2>
-        </div>
-    </div>
+    <header>
+        <h1>Entdecke die Republik.</h1>
+        <p>Ein interaktives Informationsportal über Österreich.</p>
+    </header>
 
-    <section style="text-align:center; padding: 20px;">
-        <div class="glass" style="display:inline-block; padding: 20px; border-radius: 20px;">
-            <svg viewBox="0 0 800 400" width="100%" height="auto" style="max-width:700px;">
-                <path class="land-path" d="M50,200 L150,180 L160,250 L60,260 Z" onclick="updateInfo('vbg')" />
-                <path class="land-path" d="M160,250 L300,230 L320,300 L170,310 Z" onclick="updateInfo('tirol')" />
-                <path class="land-path" d="M300,230 L400,220 L410,330 L320,300 Z" onclick="updateInfo('sbg')" />
-                <path class="land-path" d="M310,100 L470,90 L490,210 L400,210 Z" onclick="updateInfo('ooe')" />
-                <path class="land-path" d="M410,330 L490,210 L630,280 L600,390 Z" onclick="updateInfo('stmk')" />
-                <path class="land-path" d="M320,300 L410,330 L550,400 L330,410 Z" onclick="updateInfo('ktn')" />
-                <path class="land-path" d="M470,90 L650,110 L670,270 L490,270 Z" onclick="updateInfo('noe')" />
-                <circle class="land-path" cx="620" cy="160" r="15" onclick="updateInfo('wien')" />
-                <path class="land-path" d="M650,110 L700,120 L680,390 L630,280 Z" onclick="updateInfo('bgld')" />
-            </svg>
+    <section class="toggle-section">
+        <div class="book-icon" onclick="toggleData()" title="Klicke um zwischen Bundesländer und Fakten zu wechseln">📖</div>
+        <p id="toggle-label">Klicke auf das Buch, um die Bundesländer anzuzeigen!</p>
+
+        <div id="general-data">
+            <h2>Wusstest du schon?</h2>
+            <div class="grid">
+                <div class="card"><h3>Nachhaltigkeit</h3><p>Über 75% des Stroms kommen aus erneuerbaren Energien.</p></div>
+                <div class="card"><h3>Berge</h3><p>Österreich hat fast 7.000 Gipfel über 2.000 Meter.</p></div>
+                <div class="card"><h3>Kultur</h3><p>Wien wurde mehrfach als lebenswerteste Stadt der Welt ausgezeichnet.</p></div>
+            </div>
         </div>
 
-        <div id="info-panel" class="glass">
-            <h2 id="land-title">Bundesland</h2>
-            <p>Hauptstadt: <strong id="land-cap">-</strong> | Einwohner: <strong id="land-pop">-</strong></p>
-            <div id="bezirke-list" style="margin-top:15px;"></div>
+        <div id="region-data">
+            <h2>Die 9 Bundesländer</h2>
+            <div class="grid">
+                <div class="card"><h3>Wien</h3><p>Kultur & Verwaltung</p></div>
+                <div class="card"><h3>Tirol</h3><p>Alpen & Tourismus</p></div>
+                <div class="card"><h3>Salzburg</h3><p>Musik & Natur</p></div>
+                </div>
         </div>
     </section>
 
+    <section class="stats-bar">
+        <div class="stat-item"><h2 id="count1">0</h2><p>Einwohner</p></div>
+        <div class="stat-item"><h2>2.093</h2><p>Gemeinden</p></div>
+    </section>
+
     <footer>
-        &copy; 2026 Erstellt von [Dein Name] | Schüler-Projekt | Datenstand 2026
+        &copy; 2026 Erstellt von [Dein Name] | 16 Jahre | Dies ist ein privates Projekt und keine offizielle Regierungsseite.
     </footer>
 </div>
 
 <script>
-    // 1. VARIABLE INITIALISIERUNG
-    let progress = 0;
-    const bar = document.getElementById('l-bar');
-    const percentTxt = document.getElementById('l-percent');
-
-    function updateBar() {
-        if(bar) bar.style.width = progress + '%';
-        if(percentTxt) percentTxt.innerText = Math.floor(progress) + '%';
-    }
-
-    // 2. SOFORT-START TIMER
-    const fastLoad = setInterval(() => {
-        if (progress < 95) {
-            progress += Math.random() * 3;
-            updateBar();
-        } else {
-            clearInterval(fastLoad);
-        }
-    }, 100);
-
-    // 3. YOUTUBE API
+    var player;
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    var player;
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
-            height: '100%', width: '100%', videoId: 'Zn1S3RtGpWs',
-            playerVars: { 'autoplay': 1, 'mute': 1, 'controls': 1, 'rel': 0, 'vq': 'hd2160' },
-            events: { 
-                'onReady': () => {
-                    progress = 100;
-                    updateBar();
-                    setTimeout(showVideo, 600);
-                },
-                'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) exitVideo(); }
-            }
+            height: '100%',
+            width: '100%',
+            videoId: 'Zn1S3RtGpWs',
+            playerVars: { 'autoplay': 0, 'controls': 1, 'vq': 'hd2160' },
+            events: { 'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) exitVideo(); } }
         });
     }
 
-    function showVideo() {
-        const loader = document.getElementById('loader');
-        loader.style.opacity = '0';
-        setTimeout(() => {
-            loader.style.display = 'none';
-            document.getElementById('video-intro').style.display = 'flex';
-            if(player) player.playVideo();
-        }, 800);
+    // LOADER START
+    window.onload = () => {
+        let bar = document.getElementById('l-bar');
+        let w = 0;
+        let int = setInterval(() => {
+            w += Math.random() * 25;
+            if(w >= 100) {
+                clearInterval(int);
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('decision-gui').style.display = 'flex';
+                }, 500);
+            }
+            bar.style.width = w + '%';
+        }, 150);
+    };
+
+    function startWithVideo() {
+        document.getElementById('decision-gui').style.display = 'none';
+        document.getElementById('video-intro').style.display = 'flex';
+        player.unMute();
+        player.playVideo();
     }
 
     function exitVideo() {
-        if (player) player.stopVideo();
-        const intro = document.getElementById('video-intro');
-        intro.style.opacity = '0';
-        setTimeout(() => {
-            intro.style.display = 'none';
-            document.getElementById('main-content').style.opacity = '1';
-            animateValue("counter1", 0, 9124772, 2500);
-            animateValue("counter2", 0, 2093, 2000);
-        }, 800);
+        if(player) player.stopVideo();
+        document.getElementById('video-intro').style.display = 'none';
+        document.getElementById('decision-gui').style.display = 'none';
+        let main = document.getElementById('main-content');
+        main.style.display = 'block';
+        setTimeout(() => { 
+            main.style.opacity = '1'; 
+            animateValue("count1", 0, 9104772, 2000);
+        }, 50);
+    }
+
+    // TOGGLE DATEN (BUCH)
+    let showRegions = false;
+    function toggleData() {
+        showRegions = !showRegions;
+        document.getElementById('general-data').style.display = showRegions ? 'none' : 'block';
+        document.getElementById('region-data').style.display = showRegions ? 'block' : 'none';
+        document.getElementById('toggle-label').innerText = showRegions ? "Hier sind die Bundesländer!" : "Klicke auf das Buch für Bundesländer.";
     }
 
     function animateValue(id, start, end, duration) {
         const obj = document.getElementById(id);
-        if(!obj) return;
         let startTimestamp = null;
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
-            const prog = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(prog * (end - start) + start).toLocaleString('de-AT');
-            if (prog < 1) window.requestAnimationFrame(step);
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString('de-AT');
+            if (progress < 1) window.requestAnimationFrame(step);
         };
         window.requestAnimationFrame(step);
     }
-
-    // Uhrzeit & Karten-Logik
-    setInterval(() => { 
-        const clock = document.getElementById('clock');
-        if(clock) clock.innerText = new Date().toLocaleTimeString(); 
-    }, 1000);
-
-    const data = {
-        vbg:{name:"Vorarlberg", cap:"Bregenz", pop:"401.674", bez:["Bregenz", "Bludenz"]},
-        tirol:{name:"Tirol", cap:"Innsbruck", pop:"764.102", bez:["Innsbruck", "Kitzbühel"]},
-        sbg:{name:"Salzburg", cap:"Salzburg", pop:"562.503", bez:["Hallein", "Zell am See"]},
-        ooe:{name:"Oberösterreich", cap:"Linz", pop:"1.522.825", bez:["Linz", "Wels"]},
-        noe:{name:"Niederösterreich", cap:"St. Pölten", pop:"1.718.373", bez:["Baden", "Mödling"]},
-        stmk:{name:"Steiermark", cap:"Graz", pop:"1.265.463", bez:["Graz", "Leoben"]},
-        ktn:{name:"Kärnten", cap:"Klagenfurt", pop:"566.147", bez:["Villach", "Wolfsberg"]},
-        bgld:{name:"Burgenland", cap:"Eisenstadt", pop:"297.583", bez:["Oberwart", "Rust"]},
-        wien:{name:"Wien", cap:"Wien", pop:"1.982.097", bez:["Donaustadt", "Favoriten"]}
-    };
-
-    function updateInfo(key) {
-        const item = data[key];
-        const panel = document.getElementById('info-panel');
-        panel.style.display = 'block';
-        document.getElementById('land-title').innerText = item.name;
-        document.getElementById('land-cap').innerText = item.cap;
-        document.getElementById('land-pop').innerText = item.pop;
-        const list = document.getElementById('bezirke-list');
-        list.innerHTML = "";
-        item.bez.forEach(b => {
-            const span = document.createElement('span');
-            span.className = 'bezirk-tag'; span.innerText = b;
-            list.appendChild(span);
-        });
-        panel.scrollIntoView({ behavior: 'smooth' });
-    }
 </script>
+
 </body>
 </html>
