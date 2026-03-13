@@ -1,345 +1,290 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Österreich | Vision Info-Portal</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Österreich | Vision Info-Portal</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Orbitron:wght@700&display=swap" rel="stylesheet">
 
-<style>
+    <style>
+        :root {
+            --oe-red: #ed2939;
+            --oe-red-glow: rgba(237, 41, 57, 0.4);
+            --bg-light: #f4f7f6;
+            --text-main: #1a1a1a;
+            --card-bg: rgba(255, 255, 255, 0.7);
+        }
 
-:root{
---oe-red:#ed2939;
---oe-red-glow:rgba(237,41,57,0.4);
---bg-light:#f4f7f6;
---text-main:#1a1a1a;
---card-bg:rgba(255,255,255,0.7);
-}
+        body.dark-mode {
+            --bg-light: #0d0d0d;
+            --text-main: #f0f0f0;
+            --card-bg: rgba(25, 25, 25, 0.8);
+            background: #0d0d0d !important;
+        }
 
-body.dark-mode{
---bg-light:#0d0d0d;
---text-main:#f0f0f0;
---card-bg:rgba(25,25,25,0.7);
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(270deg, #ffffff, #f4f7f6, #ffffff);
+            background-size: 400% 400%;
+            animation: bgMove 18s ease infinite;
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: background 0.3s;
+        }
 
-body{
-font-family:'Inter',sans-serif;
-background:linear-gradient(270deg,#ffffff,#f4f7f6,#ffffff);
-background-size:600% 600%;
-animation:bgMove 18s ease infinite;
-color:var(--text-main);
-overflow-x:hidden;
-}
+        @keyframes bgMove {
+            0% { background-position: 0% 50% }
+            50% { background-position: 100% 50% }
+            100% { background-position: 0% 50% }
+        }
 
-@keyframes bgMove{
-0%{background-position:0% 50%}
-50%{background-position:100% 50%}
-100%{background-position:0% 50%}
-}
+        /* Mobile Blockierung Overlay */
+        #mobile-block {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; color: white; z-index: 9999;
+            display: none; align-items: center; justify-content: center;
+            text-align: center; padding: 20px; font-family: 'Orbitron';
+        }
 
-#loader{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#000;
-display:flex;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-z-index:5000;
-color:white;
-font-family:'Orbitron';
-}
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; display: flex; align-items: center; justify-content: center;
+            flex-direction: column; z-index: 5000; color: white; font-family: 'Orbitron';
+        }
 
-.l-bar-wrap{
-width:260px;
-height:6px;
-background:#333;
-margin-top:20px;
-border-radius:10px;
-overflow:hidden;
-}
+        .l-bar-wrap { width: 260px; height: 6px; background: #333; margin-top: 20px; border-radius: 10px; overflow: hidden; }
+        #l-bar { width: 0%; height: 100%; background: var(--oe-red); }
 
-#l-bar{
-width:0%;
-height:100%;
-background:var(--oe-red);
-}
+        #video-intro {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; align-items: center; justify-content: center;
+            background: black; z-index: 4000; flex-direction: column;
+        }
 
-#video-intro{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-display:none;
-align-items:center;
-justify-content:center;
-background:black;
-z-index:4000;
-flex-direction:column;
-}
+        .video-wrapper { width: 100%; height: 100%; }
+        .skip-btn {
+            position: absolute; bottom: 40px; right: 40px;
+            background: var(--oe-red); color: white; border: none;
+            padding: 12px 22px; border-radius: 8px; cursor: pointer; font-weight: bold;
+        }
 
-.video-wrapper{
-width:100%;
-height:100%;
-}
+        .glass {
+            backdrop-filter: blur(12px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--card-bg);
+        }
 
-.skip-btn{
-position:absolute;
-bottom:40px;
-right:40px;
-background:var(--oe-red);
-color:white;
-border:none;
-padding:12px 22px;
-border-radius:8px;
-cursor:pointer;
-}
+        nav {
+            padding: 15px 5%; display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 2px solid var(--oe-red);
+            position: sticky; top: 0; z-index: 1000;
+        }
 
-.glass{
-backdrop-filter:blur(12px) saturate(160%);
-border:1px solid rgba(255,255,255,0.1);
-background:var(--card-bg);
-}
+        .logo { font-weight: 800; font-family: 'Orbitron'; }
+        .logo span { color: var(--oe-red); }
 
-nav{
-padding:15px 5%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:2px solid var(--oe-red);
-position:sticky;
-top:0;
-z-index:1000;
-}
+        header { padding: 60px 5% 30px; text-align: center; }
 
-.logo{
-font-weight:800;
-font-family:'Orbitron';
-}
+        .map-container {
+            width: 100%; max-width: 800px; padding: 30px;
+            border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
 
-.logo span{color:var(--oe-red);}
+        .land-path { fill: #ccc; stroke: #fff; stroke-width: 1.5; cursor: pointer; transition: .35s; }
+        .land-path:hover {
+            fill: var(--oe-red);
+            filter: drop-shadow(0 0 15px var(--oe-red-glow));
+            transform: scale(1.02);
+        }
 
-header{
-padding:100px 5% 50px;
-text-align:center;
-}
+        #info-panel {
+            width: 100%; max-width: 800px; padding: 40px;
+            border-left: 8px solid var(--oe-red); border-radius: 15px;
+            display: none; margin-bottom: 50px;
+        }
 
-.map-container{
-width:100%;
-max-width:800px;
-padding:30px;
-border-radius:30px;
-box-shadow:0 20px 50px rgba(0,0,0,0.1);
-transition:transform .3s;
-}
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+        .stat-box { padding: 15px; border-radius: 10px; background: rgba(0,0,0,0.05); }
+        .dark-mode .stat-box { background: rgba(255,255,255,0.05); }
 
-.land-path{
-fill:#ccc;
-stroke:#fff;
-stroke-width:1.5;
-cursor:pointer;
-transition:.35s;
-}
+        .bezirke-list {
+            margin-top: 15px; display: flex; flex-wrap: wrap; gap: 10px;
+        }
+        .bezirk-tag {
+            padding: 6px 14px; background: var(--oe-red); color: white;
+            border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+        }
 
-.land-path:hover{
-fill:var(--oe-red);
-filter:drop-shadow(0 0 25px var(--oe-red-glow));
-transform:scale(1.08) translateY(-4px);
-}
+        .theme-btn {
+            background: none; border: 1px solid var(--oe-red); color: var(--text-main);
+            padding: 5px 15px; border-radius: 5px; cursor: pointer; font-family: 'Orbitron'; font-size: 0.7rem;
+        }
 
-#info-panel{
-margin-top:30px;
-width:100%;
-max-width:700px;
-padding:30px;
-border-left:8px solid var(--oe-red);
-border-radius:15px;
-display:none;
-}
-
-.bezirke-list{
-margin-top:15px;
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:8px;
-}
-
-.stats-bar{
-display:flex;
-justify-content:center;
-gap:60px;
-flex-wrap:wrap;
-background:#111;
-color:white;
-padding:80px 5%;
-}
-
-.stat-item{
-padding:30px 45px;
-border-radius:22px;
-background:rgba(255,255,255,0.06);
-backdrop-filter:blur(12px);
-transition:.35s;
-text-align:center;
-}
-
-.stat-item:hover{
-transform:translateY(-10px);
-box-shadow:0 15px 40px rgba(0,0,0,.5);
-}
-
-.stat-item h2{
-color:var(--oe-red);
-font-family:'Orbitron';
-font-size:2.8rem;
-}
-
-#main-content{
-opacity:0;
-transition:opacity .8s;
-}
-
-</style>
+        #main-content { opacity: 0; transition: opacity .8s; }
+    </style>
 </head>
 
 <body>
 
-<div id="loader">
-<div style="font-size:1.6rem;">ÖSTERREICH VISION</div>
-<div class="l-bar-wrap">
-<div id="l-bar"></div>
+<div id="mobile-block">
+    <div>
+        <h1>ZUGRIFF VERWEIGERT</h1>
+        <p style="margin-top:20px; opacity:0.7;">Diese Experience ist ausschließlich für Desktop-PCs optimiert.</p>
+        <p style="font-size: 0.8rem; margin-top: 10px;">Bitte nutzen Sie einen Computer.</p>
+    </div>
 </div>
+
+<div id="loader">
+    <div style="font-size:1.6rem;">ÖSTERREICH VISION</div>
+    <div class="l-bar-wrap">
+        <div id="l-bar"></div>
+    </div>
 </div>
 
 <div id="video-intro">
-<div class="video-wrapper">
-<div id="player"></div>
-</div>
-<button class="skip-btn" onclick="exitVideo()">Intro überspringen</button>
+    <div class="video-wrapper">
+        <div id="player"></div>
+    </div>
+    <button class="skip-btn" onclick="exitVideo()">Intro überspringen</button>
 </div>
 
 <div id="main-content">
+    <nav class="glass">
+        <div class="logo">ÖSTERREICH<span>.VISION</span></div>
+        <div style="display:flex; align-items:center; gap:20px;">
+            <button class="theme-btn" onclick="document.body.classList.toggle('dark-mode')">THEME</button>
+            <div id="clock" style="font-weight:600; font-family:'Orbitron'; min-width: 100px;"></div>
+        </div>
+    </nav>
 
-<nav class="glass">
-<div class="logo">ÖSTERREICH<span>.VISION</span></div>
-<div id="clock" style="font-weight:600;font-family:'Orbitron';"></div>
-</nav>
+    <header>
+        <h1 style="font-size:3rem;">INTERAKTIVER DATEN-HUB</h1>
+        <p style="opacity:.7; font-size:1.1rem;">Klicken Sie auf ein Bundesland für Details.</p>
+    </header>
 
-<header>
-<h1 style="font-size:3.5rem;">INTERAKTIVER DATEN-HUB</h1>
-<p style="opacity:.7;font-size:1.2rem;">Wählen Sie ein Bundesland.</p>
-</header>
+    <section style="display:flex; flex-direction:column; align-items:center; padding: 0 5%;">
+        <div class="map-container glass" id="map">
+            <svg viewBox="0 0 800 400">
+                <path class="land-path" d="M50,200 L150,180 L160,250 L60,260 Z" onclick="updateInfo('vbg')" />
+                <path class="land-path" d="M160,250 L300,230 L320,300 L170,310 Z" onclick="updateInfo('tirol')" />
+                <path class="land-path" d="M300,230 L400,220 L410,330 L320,300 Z" onclick="updateInfo('sbg')" />
+                <path class="land-path" d="M310,100 L470,90 L490,210 L400,210 Z" onclick="updateInfo('ooe')" />
+                <path class="land-path" d="M410,330 L490,210 L630,280 L600,390 Z" onclick="updateInfo('stmk')" />
+                <path class="land-path" d="M320,300 L410,330 L550,400 L330,410 Z" onclick="updateInfo('ktn')" />
+                <path class="land-path" d="M470,90 L650,110 L670,270 L490,270 Z" onclick="updateInfo('noe')" />
+                <circle class="land-path" cx="620" cy="160" r="15" onclick="updateInfo('wien')" />
+                <path class="land-path" d="M650,110 L700,120 L680,390 L630,280 Z" onclick="updateInfo('bgld')" />
+            </svg>
+        </div>
 
-<section style="display:flex;flex-direction:column;align-items:center">
+        <div id="info-panel" class="glass">
+            <h2 id="land-title" style="font-family:'Orbitron'; color:var(--oe-red); font-size: 2.5rem;">Bundesland</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <small>HAUPTSTADT</small>
+                    <p id="land-cap" style="font-weight:bold; font-size:1.2rem;">-</p>
+                </div>
+                <div class="stat-box">
+                    <small>EINWOHNER</small>
+                    <p id="land-pop" style="font-weight:bold; font-size:1.2rem;">-</p>
+                </div>
+            </div>
 
-<div class="map-container glass" id="map">
-
-<svg viewBox="0 0 800 400">
-
-<path class="land-path" d="M50,200 L150,180 L160,250 L60,260 Z" onclick="updateInfo('vbg')" />
-<path class="land-path" d="M160,250 L300,230 L320,300 L170,310 Z" onclick="updateInfo('tirol')" />
-<path class="land-path" d="M300,230 L400,220 L410,330 L320,300 Z" onclick="updateInfo('sbg')" />
-<path class="land-path" d="M310,100 L470,90 L490,210 L400,210 Z" onclick="updateInfo('ooe')" />
-<path class="land-path" d="M410,330 L490,210 L630,280 L600,390 Z" onclick="updateInfo('stmk')" />
-<path class="land-path" d="M320,300 L410,330 L550,400 L330,410 Z" onclick="updateInfo('ktn')" />
-<path class="land-path" d="M470,90 L650,110 L670,270 L490,270 Z" onclick="updateInfo('noe')" />
-<circle class="land-path" cx="620" cy="160" r="15" onclick="updateInfo('wien')" />
-<path class="land-path" d="M650,110 L700,120 L680,390 L630,280 Z" onclick="updateInfo('bgld')" />
-
-</svg>
-
-</div>
-
-<div id="info-panel" class="glass">
-<h2 id="land-title" style="font-family:'Orbitron';color:var(--oe-red)">Bundesland</h2>
-<p>Hauptstadt: <strong id="land-cap">-</strong></p>
-<div id="bezirke-list" class="bezirke-list"></div>
-</div>
-
-</section>
-
+            <p style="margin-top:20px; font-weight:600; opacity:0.8;">WICHTIGE BEZIRKE:</p>
+            <div id="bezirke-list" class="bezirke-list"></div>
+        </div>
+    </section>
 </div>
 
 <script>
+    // 1. Check for Mobile/iOS
+    if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+        document.getElementById('mobile-block').style.display = 'flex';
+        document.getElementById('loader').style.display = 'none';
+    }
 
-var tag=document.createElement('script');
-tag.src="https://www.youtube.com/iframe_api";
-document.body.appendChild(tag);
+    // 2. YouTube API
+    var tag=document.createElement('script');
+    tag.src="https://www.youtube.com/iframe_api";
+    document.body.appendChild(tag);
+    var player;
+    function onYouTubeIframeAPIReady(){
+        player=new YT.Player('player',{
+            height:'100%', width:'100%', videoId:'Zn1S3RtGpWs',
+            playerVars:{autoplay:1, mute:1, controls:0, rel:0, modestbranding:1},
+            events:{'onStateChange':onPlayerStateChange}
+        });
+    }
+    function onPlayerStateChange(e){ if(e.data==YT.PlayerState.ENDED){exitVideo();} }
 
-var player;
+    // 3. Loader & Start
+    window.addEventListener('load',()=>{
+        const bar=document.getElementById('l-bar');
+        let width=0;
+        const interval=setInterval(()=>{
+            width+=Math.random()*30;
+            if(width>=100){
+                width=100; clearInterval(interval);
+                setTimeout(()=>{
+                    document.getElementById('loader').style.display='none';
+                    if(document.getElementById('mobile-block').style.display !== 'flex'){
+                        document.getElementById('video-intro').style.display='flex';
+                    }
+                },700);
+            }
+            bar.style.width=width+"%";
+        },150);
+    });
 
-function onYouTubeIframeAPIReady(){
-player=new YT.Player('player',{
-height:'100%',
-width:'100%',
-videoId:'Zn1S3RtGpWs',
-playerVars:{autoplay:1,mute:1,controls:1},
-events:{'onStateChange':onPlayerStateChange}
-});
-}
+    function exitVideo(){
+        if(player){player.stopVideo();}
+        document.getElementById('video-intro').style.display='none';
+        document.getElementById('main-content').style.opacity='1';
+    }
 
-function onPlayerStateChange(e){
-if(e.data==YT.PlayerState.ENDED){exitVideo();}
-}
+    // 4. Clock
+    setInterval(()=>{
+        document.getElementById('clock').innerText=new Date().toLocaleTimeString();
+    },1000);
 
-window.addEventListener('load',()=>{
-const bar=document.getElementById('l-bar');
-let width=0;
+    // 5. Data & Update
+    const data={
+        vbg:{name:"Vorarlberg", cap:"Bregenz", pop:"397.000", bez: ["Dornbirn", "Feldkirch", "Bludenz"]},
+        tirol:{name:"Tirol", cap:"Innsbruck", pop:"764.000", bez: ["Kufstein", "Kitzbühel", "Lienz", "Imst"]},
+        sbg:{name:"Salzburg", cap:"Salzburg", pop:"560.000", bez: ["Hallein", "Zell am See", "St. Johann"]},
+        ktn:{name:"Kärnten", cap:"Klagenfurt", pop:"561.000", bez: ["Villach", "Wolfsberg", "Spittal"]},
+        stmk:{name:"Steiermark", cap:"Graz", pop:"1.252.000", bez: ["Leoben", "Liezen", "Weiz", "Bruck"]},
+        ooe:{name:"Oberösterreich", cap:"Linz", pop:"1.500.000", bez: ["Wels", "Steyr", "Vöcklabruck", "Gmunden"]},
+        noe:{name:"Niederösterreich", cap:"St. Pölten", pop:"1.698.000", bez: ["Baden", "Krems", "Amstetten", "Mödling"]},
+        bgld:{name:"Burgenland", cap:"Eisenstadt", pop:"297.000", bez: ["Neusiedl", "Oberwart", "Mattersburg"]},
+        wien:{name:"Wien", cap:"Wien", pop:"1.930.000", bez: ["Favoriten", "Donaustadt", "Floridsdorf", "Ottakring"]}
+    };
 
-const interval=setInterval(()=>{
-width+=Math.random()*25;
+    function updateInfo(key){
+        const item=data[key];
+        const panel = document.getElementById('info-panel');
+        panel.style.display='block';
+        document.getElementById('land-title').innerText=item.name;
+        document.getElementById('land-cap').innerText=item.cap;
+        document.getElementById('land-pop').innerText=item.pop;
+        
+        const bList = document.getElementById('bezirke-list');
+        bList.innerHTML = "";
+        item.bez.forEach(b => {
+            const span = document.createElement('span');
+            span.className = "bezirk-tag";
+            span.innerText = b;
+            bList.appendChild(span);
+        });
 
-if(width>=100){
-width=100;
-clearInterval(interval);
-
-setTimeout(()=>{
-document.getElementById('loader').style.display='none';
-document.getElementById('video-intro').style.display='flex';
-},700);
-}
-
-bar.style.width=width+"%";
-
-},120);
-});
-
-function exitVideo(){
-if(player){player.stopVideo();}
-document.getElementById('video-intro').style.display='none';
-document.getElementById('main-content').style.opacity='1';
-}
-
-setInterval(()=>{
-document.getElementById('clock').innerText=new Date().toLocaleTimeString();
-},1000);
-
-const data={
-vbg:{name:"Vorarlberg",cap:"Bregenz"},
-tirol:{name:"Tirol",cap:"Innsbruck"},
-sbg:{name:"Salzburg",cap:"Salzburg"},
-ktn:{name:"Kärnten",cap:"Klagenfurt"},
-stmk:{name:"Steiermark",cap:"Graz"},
-ooe:{name:"Oberösterreich",cap:"Linz"},
-noe:{name:"Niederösterreich",cap:"St. Pölten"},
-bgld:{name:"Burgenland",cap:"Eisenstadt"},
-wien:{name:"Wien",cap:"Wien"}
-};
-
-function updateInfo(key){
-const item=data[key];
-document.getElementById('info-panel').style.display='block';
-document.getElementById('land-title').innerText=item.name;
-document.getElementById('land-cap').innerText=item.cap;
-}
-
+        // Scroll smooth zum Panel
+        panel.scrollIntoView({behavior: "smooth"});
+    }
 </script>
 
 </body>
