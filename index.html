@@ -30,10 +30,10 @@ body{
 font-family:'Inter',sans-serif;
 background:linear-gradient(270deg,#ffffff,#f4f7f6,#ffffff);
 background-size:600% 600%;
-animation:bgMove 20s ease infinite;
+animation:bgMove 18s ease infinite;
 color:var(--text-main);
+transition:all .5s ease;
 overflow-x:hidden;
-transition:.5s;
 }
 
 @keyframes bgMove{
@@ -42,12 +42,14 @@ transition:.5s;
 100%{background-position:0% 50%}
 }
 
+/* GLASS */
 .glass{
 backdrop-filter:blur(12px) saturate(160%);
 border:1px solid rgba(255,255,255,0.1);
 background:var(--card-bg);
 }
 
+/* NAV */
 nav{
 padding:15px 5%;
 display:flex;
@@ -60,19 +62,18 @@ z-index:1000;
 }
 
 .logo{
-font-family:'Orbitron';
 font-weight:800;
+font-family:'Orbitron';
 }
 
-.logo span{
-color:var(--oe-red);
-}
+.logo span{color:var(--oe-red);}
 
 header{
 padding:100px 5% 50px;
 text-align:center;
-animation:fadeIn 1s ease;
 }
+
+/* MAP */
 
 .map-container{
 width:100%;
@@ -80,7 +81,7 @@ max-width:800px;
 padding:30px;
 border-radius:30px;
 box-shadow:0 20px 50px rgba(0,0,0,0.1);
-transition:.4s;
+transition:transform .3s;
 }
 
 .land-path{
@@ -96,6 +97,8 @@ fill:var(--oe-red);
 filter:drop-shadow(0 0 25px var(--oe-red-glow));
 transform:scale(1.08) translateY(-4px);
 }
+
+/* PANEL */
 
 #info-panel{
 margin-top:30px;
@@ -119,6 +122,8 @@ display:grid;
 grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
 gap:8px;
 }
+
+/* STATS */
 
 .stats-bar{
 display:flex;
@@ -145,10 +150,12 @@ box-shadow:0 15px 40px rgba(0,0,0,.5);
 }
 
 .stat-item h2{
-font-family:'Orbitron';
 color:var(--oe-red);
-font-size:2.6rem;
+font-family:'Orbitron';
+font-size:2.8rem;
 }
+
+/* BUTTONS */
 
 .control-btn{
 position:fixed;
@@ -160,32 +167,16 @@ align-items:center;
 justify-content:center;
 cursor:pointer;
 z-index:2000;
-background:linear-gradient(145deg,#ff3b4b,#b80014);
+transition:.3s;
+background:var(--oe-red);
 color:white;
 border:none;
 font-size:1.2rem;
-box-shadow:0 10px 25px rgba(0,0,0,0.3);
-transition:.3s;
-}
-
-.control-btn:hover{
-transform:scale(1.08);
 }
 
 #dark-mode-toggle{bottom:20px;right:20px;}
 #sound-toggle{bottom:85px;right:20px;background:#333;}
 #fact-btn{bottom:20px;left:20px;width:auto;padding:0 20px;border-radius:30px;font-weight:600;}
-
-@keyframes fadeIn{
-0%{opacity:0;transform:translateY(15px)}
-100%{opacity:1;transform:translateY(0)}
-}
-
-footer{
-padding:50px;
-text-align:center;
-opacity:.5;
-}
 
 </style>
 
@@ -193,27 +184,28 @@ opacity:.5;
 
 <body>
 
-<div id="fact-btn" class="control-btn" onclick="showFact()">💡</div>
+<audio id="bg-ambient" loop src="https://www.soundjay.com/nature/sounds/wind-01.mp3"></audio>
+
+<div id="fact-btn" class="control-btn" onclick="showFact()">💡 Wusstest du schon?</div>
+
 <div id="sound-toggle" class="control-btn" onclick="toggleSound()">🔇</div>
 <div id="dark-mode-toggle" class="control-btn" onclick="toggleDarkMode()">🌓</div>
-
-<audio id="bg-ambient" loop src="https://www.soundjay.com/nature/sounds/wind-01.mp3"></audio>
 
 <div id="main-content">
 
 <nav class="glass">
 <div class="logo">ÖSTERREICH<span>.VISION</span></div>
-<div id="clock" style="font-family:Orbitron;">00:00:00</div>
+<div id="clock" style="font-weight:600;font-family:'Orbitron';">00:00:00</div>
 </nav>
 
 <header>
-<h1 style="font-size:3.5rem;">INTERAKTIVER DATEN HUB</h1>
-<p style="opacity:.7;">Wählen Sie ein Bundesland für detaillierte Statistiken</p>
+<h1 style="font-size:3.5rem;">INTERAKTIVER DATEN-HUB</h1>
+<p style="opacity:.7;font-size:1.2rem;">Wählen Sie ein Bundesland für detaillierte Statistiken.</p>
 </header>
 
 <section class="map-section" style="display:flex;flex-direction:column;align-items:center">
 
-<div class="map-container glass">
+<div class="map-container glass" id="map">
 
 <svg viewBox="0 0 800 400">
 
@@ -233,10 +225,12 @@ opacity:.5;
 
 <div id="info-panel" class="glass">
 
-<h2 id="land-title" style="font-family:Orbitron;color:var(--oe-red)">Bundesland</h2>
+<h2 id="land-title" style="font-family:'Orbitron';color:var(--oe-red)">Bundesland</h2>
 
-<p>Hauptstadt: <strong id="land-cap">-</strong></p>
-<p>Bezirke: <strong id="land-count">-</strong></p>
+<p style="font-size:1.1rem;margin:10px 0;">
+Hauptstadt: <strong id="land-cap">-</strong> |
+Bezirke: <strong id="land-count">-</strong>
+</p>
 
 <div id="bezirke-list" class="bezirke-list"></div>
 
@@ -244,7 +238,7 @@ opacity:.5;
 <p>Fläche Österreich: 83.879 km²</p>
 <p>Einwohner: ca. 9,1 Millionen</p>
 <p>EU Mitglied seit 1995</p>
-<p>Höchster Berg: Großglockner 3798m</p>
+<p>Höchster Berg: Großglockner (3798m)</p>
 <p>Längster Fluss: Donau</p>
 </div>
 
@@ -256,7 +250,7 @@ opacity:.5;
 
 <div class="stat-item">
 <h2 class="counter" data-target="9100000">0</h2>
-<p>Einwohner</p>
+<p>Einwohner (ca.)</p>
 </div>
 
 <div class="stat-item">
@@ -265,57 +259,67 @@ opacity:.5;
 </div>
 
 <div class="stat-item">
-<h2 class="counter" data-target="83779">0</h2>
-<p>km² Fläche</p>
+<h2>∞</h2>
+<p>Visionen</p>
 </div>
 
 </section>
 
-<footer>
-© 2026 Österreich Vision
+<footer style="padding:50px;text-align:center;opacity:.5;">
+&copy; 2026 Österreich Vision | Design & Daten
 </footer>
 
 </div>
 
 <script>
 
+/* FACTS */
+
 const facts=[
-"Fast 60 Prozent Österreichs liegen in den Alpen",
-"Wien wurde mehrfach zur lebenswertesten Stadt der Welt gewählt",
-"Die Donau fließt etwa 350 Kilometer durch Österreich",
-"Österreich hat über 2000 Burgen und Schlösser",
-"Der Großglockner ist mit 3798 Metern der höchste Berg"
-]
+"In Österreich gibt es die älteste Zeitung der Welt (Wiener Zeitung).",
+"Fast 60% Österreichs liegen in den Alpen.",
+"Österreich hat die höchste Dichte an Bio-Bauern in der EU.",
+"Die Nationalbibliothek in Wien beherbergt über 12 Millionen Objekte.",
+"Der Großglockner ist mit 3798 Metern der höchste Berg."
+];
 
 function showFact(){
-const f=facts[Math.floor(Math.random()*facts.length)]
-alert(f)
+const f=facts[Math.floor(Math.random()*facts.length)];
+alert("FAKT: "+f);
 }
+
+/* SOUND */
 
 function toggleSound(){
-const audio=document.getElementById("bg-ambient")
-const btn=document.getElementById("sound-toggle")
+const audio=document.getElementById('bg-ambient');
+const btn=document.getElementById('sound-toggle');
 
 if(audio.paused){
-audio.play()
-btn.innerText="🔊"
+audio.play();
+btn.innerText="🔊";
 }else{
-audio.pause()
-btn.innerText="🔇"
+audio.pause();
+btn.innerText="🔇";
 }
 }
+
+/* DARKMODE */
 
 function toggleDarkMode(){
-document.body.classList.toggle("dark-mode")
+document.body.classList.toggle('dark-mode');
 }
 
+/* CLOCK */
+
 setInterval(()=>{
-document.getElementById("clock").innerText=new Date().toLocaleTimeString()
-},1000)
+document.getElementById('clock').innerText=new Date().toLocaleTimeString();
+},1000);
+
+/* DATA */
 
 const data={
 vbg:{name:"Vorarlberg",cap:"Bregenz",count:4,list:["Bregenz","Dornbirn","Feldkirch","Bludenz"]},
-tirol:{name:"Tirol",cap:"Innsbruck",count:9,list:["Innsbruck","Imst","Kitzbühel","Kufstein","Landeck","Lienz","Reutte","Schwaz"]},
+tirol:{name:"Tirol",cap:"Innsbruck",count:9,list:["Imst","Kitzbühel","Kufstein","Landeck","Lienz","Reutte","Schwaz"]},
 sbg:{name:"Salzburg",cap:"Salzburg",count:6,list:["Hallein","Tamsweg","Zell am See"]},
 ktn:{name:"Kärnten",cap:"Klagenfurt",count:10,list:["Villach","Spittal","Wolfsberg"]},
 stmk:{name:"Steiermark",cap:"Graz",count:13,list:["Leoben","Liezen","Murau"]},
@@ -323,71 +327,64 @@ ooe:{name:"Oberösterreich",cap:"Linz",count:18,list:["Wels","Steyr","Perg"]},
 noe:{name:"Niederösterreich",cap:"St. Pölten",count:24,list:["Melk","Mödling","Tulln"]},
 bgld:{name:"Burgenland",cap:"Eisenstadt",count:9,list:["Güssing","Jennersdorf"]},
 wien:{name:"Wien",cap:"Wien",count:23,list:["Innere Stadt","Leopoldstadt","Landstraße"]}
-}
+};
 
 function updateInfo(key){
 
-const item=data[key]
-const panel=document.getElementById("info-panel")
+const item=data[key];
+const panel=document.getElementById('info-panel');
 
-panel.style.display="block"
+panel.style.display='block';
 
-document.getElementById("land-title").innerText=item.name
-document.getElementById("land-cap").innerText=item.cap
-document.getElementById("land-count").innerText=item.count
+document.getElementById('land-title').innerText=item.name;
+document.getElementById('land-cap').innerText=item.cap;
+document.getElementById('land-count').innerText=item.count;
 
-document.getElementById("bezirke-list").innerHTML=item.list.map(b=>`<span>• ${b}</span>`).join("")
+document.getElementById('bezirke-list').innerHTML=
+item.list.map(b=>`<span style="font-size:0.9rem;opacity:0.8;">• ${b}</span>`).join('');
+
 }
+
+/* COUNTER */
 
 document.querySelectorAll(".counter").forEach(counter=>{
-counter.innerText="0"
+counter.innerText="0";
+
 const update=()=>{
-const target=+counter.getAttribute("data-target")
-const c=+counter.innerText
-const inc=target/200
+const target=+counter.getAttribute("data-target");
+const c=+counter.innerText;
+const inc=target/200;
 
 if(c<target){
-counter.innerText=Math.ceil(c+inc)
-setTimeout(update,15)
+counter.innerText=Math.ceil(c+inc);
+setTimeout(update,15);
 }else{
-counter.innerText=target.toLocaleString()
+counter.innerText=target.toLocaleString();
 }
-}
-update()
-})
+};
 
-const map=document.querySelector(".map-container")
+update();
+});
+
+/* 3D MAP EFFECT */
+
+const map=document.getElementById("map");
 
 map.addEventListener("mousemove",e=>{
-const rect=map.getBoundingClientRect()
-const x=e.clientX-rect.left
-const y=e.clientY-rect.top
+const rect=map.getBoundingClientRect();
 
-const rotateX=(y/rect.height-.5)*10
-const rotateY=(x/rect.width-.5)*-10
+const x=e.clientX-rect.left;
+const y=e.clientY-rect.top;
 
-map.style.transform=`perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
-})
+const rotateX=(y/rect.height-.5)*10;
+const rotateY=(x/rect.width-.5)*-10;
+
+map.style.transform=`perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+});
 
 map.addEventListener("mouseleave",()=>{
-map.style.transform="perspective(900px) rotateX(0) rotateY(0)"
-})
-
-const glow=document.createElement("div")
-glow.style.position="fixed"
-glow.style.width="300px"
-glow.style.height="300px"
-glow.style.background="radial-gradient(circle, rgba(237,41,57,0.15) 0%, transparent 70%)"
-glow.style.pointerEvents="none"
-glow.style.zIndex="1"
-glow.style.transform="translate(-50%,-50%)"
-
-document.body.appendChild(glow)
-
-document.addEventListener("mousemove",e=>{
-glow.style.left=e.clientX+"px"
-glow.style.top=e.clientY+"px"
-})
+map.style.transform="perspective(900px) rotateX(0) rotateY(0)";
+});
 
 </script>
 
