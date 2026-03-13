@@ -3,17 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Österreich | Mein Projekt</title>
+    <title>Österreich | Interaktives Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --oe-red: #ed2939;
             --bg-light: #f8f9fa;
             --text-main: #1a1a1a;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* Dark Mode Colors */
+        [data-theme="dark"] {
+            --bg-light: #0f0f0f;
+            --text-main: #f1f1f1;
+            --card-bg: #1e1e1e;
+            --nav-bg: rgba(15, 15, 15, 0.9);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); overflow-x: hidden; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-light); 
+            color: var(--text-main); 
+            overflow-x: hidden;
+            transition: background-color 0.5s ease;
+        }
+
+        /* --- ANIMIERTER HINTERGRUND --- */
+        .bg-parallax {
+            position: fixed; top: 0; left: 0; width: 110%; height: 110%;
+            background: linear-gradient(rgba(237, 41, 57, 0.05), rgba(255, 255, 255, 0)), 
+                        url('https://images.unsplash.com/photo-1520114878144-6123749968dd?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover; background-position: center;
+            z-index: -1; transform: translate(-5%, -5%);
+            filter: grayscale(20%) blur(2px); opacity: 0.3;
+        }
 
         /* --- LOADER --- */
         #loader {
@@ -23,120 +50,182 @@
         .loader-bar-container { width: 200px; height: 4px; background: #eee; margin-top: 20px; overflow: hidden; border-radius: 2px; }
         .loader-bar { width: 0%; height: 100%; background: var(--oe-red); transition: width 0.4s ease; }
 
-        /* --- MODERNE FRAGEN GUI --- */
-        #decision-gui {
+        /* --- GUI BOXEN --- */
+        #decision-gui, #video-intro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); z-index: 9500; display: none;
+            background: rgba(0,0,0,0.95); z-index: 9500; display: none;
             align-items: center; justify-content: center; text-align: center; color: white;
+            backdrop-filter: blur(10px);
         }
-        .gui-box { background: #fff; color: #000; padding: 40px; border-radius: 15px; max-width: 400px; }
+        .gui-box { background: var(--card-bg); color: var(--text-main); padding: 40px; border-radius: 20px; max-width: 450px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .gui-btn { 
             display: block; width: 100%; padding: 15px; margin: 10px 0; 
-            border: none; border-radius: 5px; cursor: pointer; font-weight: 700; transition: 0.3s;
+            border: none; border-radius: 12px; cursor: pointer; font-weight: 700; transition: var(--transition);
         }
         .btn-video { background: var(--oe-red); color: white; }
+        .btn-video:hover { transform: scale(1.05); box-shadow: 0 5px 15px rgba(237, 41, 57, 0.4); }
         .btn-direct { background: #eee; color: #000; }
 
-        /* --- VIDEO LAYER --- */
-        #video-intro {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; z-index: 9000; display: none; flex-direction: column; align-items: center; justify-content: center;
+        /* --- NAVBAR --- */
+        nav { 
+            background: var(--nav-bg); padding: 15px 5%; 
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; 
+            backdrop-filter: blur(10px);
         }
-        .video-wrapper { width: 90%; max-width: 1000px; aspect-ratio: 16/9; }
-
-        /* --- WEBSITE CONTENT --- */
-        #main-content { display: none; opacity: 0; transition: opacity 1s ease; }
-        nav { background: #fff; padding: 20px 5%; display: flex; justify-content: space-between; border-bottom: 3px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-weight: 800; }
+        .logo { font-weight: 800; font-size: 1.4rem; }
         .logo span { color: var(--oe-red); }
+        .nav-tools { display: flex; gap: 20px; align-items: center; }
+        .theme-toggle { cursor: pointer; font-size: 1.2rem; }
 
-        header { padding: 80px 5%; text-align: center; }
-        
-        /* --- DATEN WECHSEL SEKTION --- */
-        .toggle-section { padding: 40px 5%; text-align: center; }
-        .book-icon { font-size: 50px; cursor: pointer; transition: 0.3s; display: inline-block; }
-        .book-icon:hover { transform: scale(1.2); color: var(--oe-red); }
-        
-        #region-data { display: none; margin-top: 30px; } /* Bundesländer */
-        #general-data { margin-top: 30px; } /* Allgemeine Daten */
+        /* --- CONTENT --- */
+        #main-content { display: none; opacity: 0; }
+        header { padding: 100px 5% 50px; text-align: center; }
+        header h1 { font-size: 3.5rem; margin-bottom: 10px; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .card { background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #ddd; }
+        /* --- CARDS & GRID --- */
+        .section-container { max-width: 1200px; margin: 0 auto; padding: 40px 5%; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .card { 
+            background: var(--card-bg); padding: 30px; border-radius: 15px; 
+            border: 1px solid rgba(0,0,0,0.05); transition: var(--transition);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            position: relative; overflow: hidden;
+        }
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); border-color: var(--oe-red); }
+        .card h3 { color: var(--oe-red); margin-bottom: 10px; }
 
-        .stats-bar { background: #1a1a1a; color: #fff; padding: 40px; display: flex; justify-content: space-around; }
-        .stat-item h2 { color: var(--oe-red); font-size: 2.5rem; }
+        /* --- WEATHER WIDGET --- */
+        .weather-box { background: var(--oe-red); color: white; border-radius: 15px; padding: 20px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; }
 
-        footer { padding: 30px; background: #eee; text-align: center; font-size: 0.8rem; color: #555; border-top: 1px solid #ddd; }
+        /* --- STATS --- */
+        .stats-bar { background: #1a1a1a; color: #fff; padding: 60px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px; }
+        .stat-item { text-align: center; }
+        .stat-item h2 { color: var(--oe-red); font-size: 3rem; }
+
+        .book-icon { font-size: 60px; cursor: pointer; transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: inline-block; margin-bottom: 10px; }
+        .book-icon:hover { transform: rotate(15deg) scale(1.2); }
+
+        footer { padding: 40px; background: var(--card-bg); text-align: center; font-size: 0.9rem; opacity: 0.7; }
+
+        /* Animations */
+        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s all ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
 <body>
 
+<div class="bg-parallax" id="parallax"></div>
+
 <div id="loader">
-    <div style="font-weight: 800; font-size: 1.5rem;">ÖSTERREICH <span>PROJEKT</span></div>
+    <div style="font-weight: 800; font-size: 1.8rem; letter-spacing: 2px;">AUT <span style="color:var(--oe-red)">PROJEKT</span></div>
     <div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
 </div>
 
 <div id="decision-gui">
     <div class="gui-box">
-        <h2>Willkommen</h2>
-        <p style="margin-bottom: 20px;">Möchtest du das Video-Intro sehen oder direkt zum Portal?</p>
-        <button class="gui-btn btn-video" onclick="startWithVideo()">🎬 Intro mit Sound</button>
+        <h2>Servus! 🇦🇹</h2>
+        <p style="margin: 20px 0;">Bereit für eine Reise durch Österreich?</p>
+        <button class="gui-btn btn-video" onclick="startWithVideo()">🎬 Intro starten (4K)</button>
         <button class="gui-btn btn-direct" onclick="exitVideo()">➡️ Direkt zum Portal</button>
     </div>
 </div>
 
 <div id="video-intro">
-    <div class="video-wrapper">
+    <div class="video-wrapper" style="width: 90%; max-width: 1000px; aspect-ratio: 16/9;">
         <div id="player"></div>
     </div>
-    <button class="gui-btn" style="width: 200px; background: white;" onclick="exitVideo()">Überspringen</button>
+    <button class="gui-btn" style="width: 200px; background: white; color: black; margin-top: 20px;" onclick="exitVideo()">Überspringen</button>
 </div>
 
 <div id="main-content">
     <nav>
         <div class="logo">ÖSTERREICH<span>.vlog</span></div>
-        <div style="font-size: 0.8rem; font-weight: 600;">Privates Web-Projekt</div>
+        <div class="nav-tools">
+            <div class="theme-toggle" onclick="toggleTheme()" title="Modus wechseln">🌓</div>
+            <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">Beta v2.0</div>
+        </div>
     </nav>
 
     <header>
-        <h1>Entdecke die Republik.</h1>
-        <p>Ein interaktives Informationsportal über Österreich.</p>
+        <h1 class="reveal">Entdecke die Republik.</h1>
+        <p class="reveal">Berge, Seen und Kultur – Ein interaktives Erlebnis.</p>
     </header>
 
-    <section class="toggle-section">
-        <div class="book-icon" onclick="toggleData()" title="Klicke um zwischen Bundesländer und Fakten zu wechseln">📖</div>
-        <p id="toggle-label">Klicke auf das Buch, um die Bundesländer anzuzeigen!</p>
-
-        <div id="general-data">
-            <h2>Wusstest du schon?</h2>
-            <div class="grid">
-                <div class="card"><h3>Nachhaltigkeit</h3><p>Über 75% des Stroms kommen aus erneuerbaren Energien.</p></div>
-                <div class="card"><h3>Berge</h3><p>Österreich hat fast 7.000 Gipfel über 2.000 Meter.</p></div>
-                <div class="card"><h3>Kultur</h3><p>Wien wurde mehrfach als lebenswerteste Stadt der Welt ausgezeichnet.</p></div>
+    <div class="section-container">
+        <div class="weather-box reveal">
+            <div>
+                <h4>Aktuelles Wetter (Wien)</h4>
+                <p id="weather-desc">Sonnig und klar</p>
             </div>
+            <h2 id="temp">18°C</h2>
         </div>
 
-        <div id="region-data">
-            <h2>Die 9 Bundesländer</h2>
-            <div class="grid">
-                <div class="card"><h3>Wien</h3><p>Kultur & Verwaltung</p></div>
-                <div class="card"><h3>Tirol</h3><p>Alpen & Tourismus</p></div>
-                <div class="card"><h3>Salzburg</h3><p>Musik & Natur</p></div>
+        <section class="toggle-section" style="text-align: center;">
+            <div class="book-icon" onclick="toggleData()">📖</div>
+            <h3 id="toggle-label" style="margin-bottom: 40px;">Klicke auf das Buch für die Bundesländer</h3>
+
+            <div id="general-data">
+                <div class="grid">
+                    <div class="card reveal"><h3>Nachhaltigkeit</h3><p>Über 75% des Stroms kommen aus erneuerbaren Energien.</p></div>
+                    <div class="card reveal"><h3>Gipfelstürmer</h3><p>Fast 7.000 Berge sind höher als 2.000 Meter.</p></div>
+                    <div class="card reveal"><h3>Lebensqualität</h3><p>Wien ist regelmäßig die lebenswerteste Stadt der Welt.</p></div>
+                    <div class="card reveal"><h3>Kaffeehaus</h3><p>Die Wiener Kaffeekultur ist UNESCO-Weltkulturerbe.</p></div>
                 </div>
-        </div>
-    </section>
+            </div>
+
+            <div id="region-data" style="display:none;">
+                <div class="grid">
+                    <div class="card"><h3>Wien</h3><p>Bundeshauptstadt & Kulturmetropole.</p></div>
+                    <div class="card"><h3>Niederösterreich</h3><p>Größtes Bundesland, weite Ebenen & Wein.</p></div>
+                    <div class="card"><h3>Oberösterreich</h3><p>Industrie, Seen & Berge.</p></div>
+                    <div class="card"><h3>Salzburg</h3><p>Mozartstadt & Festspiele.</p></div>
+                    <div class="card"><h3>Tirol</h3><p>Herz der Alpen & Tourismus.</p></div>
+                    <div class="card"><h3>Vorarlberg</h3><p>Modernste Architektur & Bodensee.</p></div>
+                    <div class="card"><h3>Steiermark</h3><p>Das grüne Herz Österreichs.</p></div>
+                    <div class="card"><h3>Kärnten</h3><p>Seenparadies im Süden.</p></div>
+                    <div class="card"><h3>Burgenland</h3><p>Sonne, Wein & Steppensee.</p></div>
+                </div>
+            </div>
+        </section>
+    </div>
 
     <section class="stats-bar">
-        <div class="stat-item"><h2 id="count1">0</h2><p>Einwohner</p></div>
-        <div class="stat-item"><h2>2.093</h2><p>Gemeinden</p></div>
+        <div class="stat-item">
+            <h2 id="count1">0</h2>
+            <p>Einwohner</p>
+        </div>
+        <div class="stat-item">
+            <h2 id="count2">0</h2>
+            <p>Gemeinden</p>
+        </div>
+        <div class="stat-item">
+            <h2 id="count3">0</h2>
+            <p>Nationalparks</p>
+        </div>
     </section>
 
     <footer>
-        &copy; 2026 Erstellt von [Dein Name] | 16 Jahre | Dies ist ein privates Projekt und keine offizielle Regierungsseite.
+        &copy; 2026 Erstellt von [Dein Name] | 16 Jahre | Innovatives Web-Projekt
     </footer>
 </div>
 
 <script>
+    // THEME TOGGLE
+    function toggleTheme() {
+        const body = document.body;
+        const current = body.getAttribute('data-theme');
+        body.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    }
+
+    // PARALLAX EFFECT
+    document.addEventListener('mousemove', (e) => {
+        const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
+        const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
+        document.getElementById('parallax').style.transform = `translate(calc(-5% + ${moveX}px), calc(-5% + ${moveY}px))`;
+    });
+
+    // YOUTUBE API
     var player;
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
@@ -145,35 +234,36 @@
 
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
-            height: '100%',
-            width: '100%',
+            height: '100%', width: '100%',
             videoId: 'Zn1S3RtGpWs',
-            playerVars: { 'autoplay': 0, 'controls': 1, 'vq': 'hd2160' },
+            playerVars: { 'autoplay': 0, 'controls': 1 },
             events: { 'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) exitVideo(); } }
         });
     }
 
-    // LOADER START
+    // LOADER
     window.onload = () => {
         let bar = document.getElementById('l-bar');
         let w = 0;
         let int = setInterval(() => {
-            w += Math.random() * 25;
+            w += Math.random() * 30;
             if(w >= 100) {
                 clearInterval(int);
                 setTimeout(() => {
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('decision-gui').style.display = 'flex';
+                    document.getElementById('loader').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loader').style.display = 'none';
+                        document.getElementById('decision-gui').style.display = 'flex';
+                    }, 500);
                 }, 500);
             }
             bar.style.width = w + '%';
-        }, 150);
+        }, 100);
     };
 
     function startWithVideo() {
         document.getElementById('decision-gui').style.display = 'none';
         document.getElementById('video-intro').style.display = 'flex';
-        player.unMute();
         player.playVideo();
     }
 
@@ -185,17 +275,31 @@
         main.style.display = 'block';
         setTimeout(() => { 
             main.style.opacity = '1'; 
-            animateValue("count1", 0, 9104772, 2000);
+            animateValue("count1", 0, 9104772, 2500);
+            animateValue("count2", 0, 2093, 2000);
+            animateValue("count3", 0, 6, 1500);
+            handleScrollReveal();
         }, 50);
     }
 
-    // TOGGLE DATEN (BUCH)
+    // TOGGLE DATA
     let showRegions = false;
     function toggleData() {
         showRegions = !showRegions;
         document.getElementById('general-data').style.display = showRegions ? 'none' : 'block';
         document.getElementById('region-data').style.display = showRegions ? 'block' : 'none';
-        document.getElementById('toggle-label').innerText = showRegions ? "Hier sind die Bundesländer!" : "Klicke auf das Buch für Bundesländer.";
+        document.getElementById('toggle-label').innerText = showRegions ? "Die 9 Bundesländer im Überblick" : "Klicke auf das Buch für die Bundesländer";
+    }
+
+    // SCROLL REVEAL
+    function handleScrollReveal() {
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, { threshold: 0.1 });
+        reveals.forEach(r => observer.observe(r));
     }
 
     function animateValue(id, start, end, duration) {
