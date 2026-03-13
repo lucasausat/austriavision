@@ -9,70 +9,84 @@
     <style>
         :root {
             --oe-red: #ed2939;
-            --oe-red-glow: rgba(237, 41, 57, 0.4);
+            --oe-red-glow: rgba(237, 41, 57, 0.6);
             --bg-light: #f4f7f6;
             --text-main: #1a1a1a;
             --card-bg: rgba(255, 255, 255, 0.7);
-        }
-
-        body.dark-mode {
-            --bg-light: #0d0d0d;
-            --text-main: #f0f0f0;
-            --card-bg: rgba(25, 25, 25, 0.8);
-            background: #0d0d0d !important;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(270deg, #ffffff, #f4f7f6, #ffffff);
-            background-size: 400% 400%;
-            animation: bgMove 18s ease infinite;
-            color: var(--text-main);
+            background: #0d0d0d;
+            color: #f0f0f0;
             overflow-x: hidden;
         }
 
-        @keyframes bgMove { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-
-        #mobile-block {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; color: white; z-index: 9999;
-            display: none; align-items: center; justify-content: center;
-            text-align: center; padding: 20px; font-family: 'Orbitron';
-        }
-
+        /* VERBESSERTER LOADER */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: flex; align-items: center; justify-content: center;
-            flex-direction: column; z-index: 5000; color: white; font-family: 'Orbitron';
-            transition: opacity 0.8s;
+            flex-direction: column; z-index: 5000; transition: opacity 0.8s;
         }
 
-        .l-bar-wrap { width: 260px; height: 6px; background: #333; margin-top: 20px; border-radius: 10px; overflow: hidden; }
-        #l-bar { width: 0%; height: 100%; background: var(--oe-red); transition: width 0.2s; }
+        .loader-content { text-align: center; }
 
+        .loader-title {
+            font-family: 'Orbitron';
+            font-size: 1.8rem;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 0 15px var(--oe-red-glow);
+            animation: pulse 2s infinite;
+        }
+
+        .l-bar-wrap { 
+            width: 300px; height: 4px; background: #222; 
+            border-radius: 10px; overflow: hidden; position: relative;
+        }
+
+        #l-bar { 
+            width: 0%; height: 100%; background: var(--oe-red); 
+            box-shadow: 0 0 15px var(--oe-red);
+            transition: width 0.3s cubic-bezier(0.1, 0.5, 0.5, 1); 
+        }
+
+        #l-percent {
+            font-family: 'Orbitron'; font-size: 0.8rem; color: var(--oe-red);
+            margin-top: 10px; letter-spacing: 2px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.6; transform: scale(0.98); }
+        }
+
+        /* RESTLICHE STYLES */
         #video-intro {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: none; align-items: center; justify-content: center;
-            background: black; z-index: 4000; flex-direction: column;
-            transition: opacity 0.8s;
+            display: none; background: black; z-index: 4000;
         }
-
         .video-wrapper { width: 100%; height: 100%; }
+        
         .skip-btn {
             position: absolute; bottom: 40px; right: 40px;
             background: var(--oe-red); color: white; border: none;
             padding: 15px 25px; border-radius: 8px; cursor: pointer;
             font-family: 'Orbitron'; font-size: 0.9rem; z-index: 4001;
+            box-shadow: 0 0 20px var(--oe-red-glow); transition: 0.2s;
         }
+        .skip-btn:hover { transform: scale(1.05); background: #ff2e3d; }
 
-        #main-content { opacity: 0; transition: opacity 1s; }
+        #main-content { opacity: 0; transition: opacity 1s; background: var(--bg-light); color: var(--text-main); min-height: 100vh; }
+        .glass { backdrop-filter: blur(12px); border: 1px solid rgba(0,0,0,0.05); background: var(--card-bg); }
 
-        .glass { backdrop-filter: blur(12px) saturate(160%); border: 1px solid rgba(255,255,255,0.1); background: var(--card-bg); }
-
-        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; }
-        .logo { font-weight: 800; font-family: 'Orbitron'; }
+        /* Navigation & Logo */
+        nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--oe-red); background: white; }
+        .logo { font-weight: 800; font-family: 'Orbitron'; color: #000; }
         .logo span { color: var(--oe-red); }
 
         .stats-bar { display: flex; justify-content: center; gap: 30px; padding: 40px 5%; flex-wrap: wrap; }
@@ -80,52 +94,38 @@
         .stat-card h2 { color: var(--oe-red); font-family: 'Orbitron'; font-size: 2rem; }
 
         .land-path { fill: #ccc; stroke: #fff; stroke-width: 1.5; cursor: pointer; transition: .35s; }
-        .land-path:hover { fill: var(--oe-red); filter: drop-shadow(0 0 15px var(--oe-red-glow)); transform: scale(1.02); }
+        .land-path:hover { fill: var(--oe-red); }
 
         #info-panel { width: 90%; max-width: 800px; padding: 30px; margin: 30px auto; border-left: 8px solid var(--oe-red); border-radius: 15px; display: none; }
-        .bezirk-tag { display: inline-block; padding: 5px 12px; background: var(--oe-red); color: white; border-radius: 15px; margin: 5px; font-size: 0.8rem; font-weight: bold; }
-
-        /* NEU: Info Sektionen */
-        .info-section { padding: 60px 10%; }
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
-        .info-card { padding: 30px; border-radius: 20px; transition: 0.3s; }
-        .info-card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .info-card h3 { font-family: 'Orbitron'; color: var(--oe-red); margin-bottom: 15px; }
+        .bezirk-tag { display: inline-block; padding: 5px 12px; background: var(--oe-red); color: white; border-radius: 15px; margin: 5px; font-size: 0.8rem; }
         
-        footer { text-align: center; padding: 40px; font-size: 0.8rem; opacity: 0.6; font-family: 'Inter'; border-top: 1px solid rgba(0,0,0,0.1); }
+        footer { text-align: center; padding: 40px; font-size: 0.8rem; color: #666; }
     </style>
 </head>
 <body>
 
-<div id="mobile-block">
-    <h1>PC ZUGRIFF ERFORDERLICH</h1>
-    <p>Diese Experience ist für Desktop-Monitore optimiert.</p>
-</div>
-
 <div id="loader">
-    <div style="font-size:1.6rem; letter-spacing: 4px;">ÖSTERREICH VISION</div>
-    <div class="l-bar-wrap"><div id="l-bar"></div></div>
+    <div class="loader-content">
+        <div class="loader-title">AUSTRIA VISION</div>
+        <div class="l-bar-wrap"><div id="l-bar"></div></div>
+        <div id="l-percent">0%</div>
+    </div>
 </div>
 
 <div id="video-intro">
     <div class="video-wrapper"><div id="player"></div></div>
-    <button class="skip-btn" onclick="exitVideo()">Intro überspringen & Portal öffnen</button>
+    <button class="skip-btn" onclick="exitVideo()">ÜBERSPRINGEN</button>
 </div>
 
 <div id="main-content">
-    <nav class="glass">
+    <nav>
         <div class="logo">ÖSTERREICH<span>.VISION</span></div>
-        <div id="clock" style="font-family:'Orbitron'; font-weight:600;"></div>
+        <div id="clock" style="font-family:'Orbitron';">00:00:00</div>
     </nav>
-
-    <header style="text-align:center; padding: 60px 0;">
-        <h1 style="font-size:3.5rem; font-family:'Orbitron';">INTERAKTIVER DATEN-HUB</h1>
-        <p style="font-size: 1.2rem; opacity: 0.7;">Analysieren Sie die Bundesländer und Fakten der Republik</p>
-    </header>
 
     <div class="stats-bar">
         <div class="stat-card glass">
-            <small>EINWOHNER (GESAMT)</small>
+            <small>EINWOHNER 2026</small>
             <h2 id="counter1">0</h2>
         </div>
         <div class="stat-card glass">
@@ -134,9 +134,9 @@
         </div>
     </div>
 
-    <section style="display:flex; flex-direction:column; align-items:center;">
-        <div class="glass" style="padding: 20px; border-radius: 20px; max-width: 800px; width: 95%;">
-            <svg viewBox="0 0 800 400">
+    <section style="text-align:center; padding: 20px;">
+        <div class="glass" style="display:inline-block; padding: 20px; border-radius: 20px;">
+            <svg viewBox="0 0 800 400" width="100%" height="auto" style="max-width:700px;">
                 <path class="land-path" d="M50,200 L150,180 L160,250 L60,260 Z" onclick="updateInfo('vbg')" />
                 <path class="land-path" d="M160,250 L300,230 L320,300 L170,310 Z" onclick="updateInfo('tirol')" />
                 <path class="land-path" d="M300,230 L400,220 L410,330 L320,300 Z" onclick="updateInfo('sbg')" />
@@ -150,53 +150,38 @@
         </div>
 
         <div id="info-panel" class="glass">
-            <h2 id="land-title" style="font-family:'Orbitron'; color:var(--oe-red); margin-bottom: 10px;">Bundesland</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <p>Hauptstadt: <br><strong id="land-cap">-</strong></p>
-                <p>Einwohner: <br><strong id="land-pop">-</strong></p>
-            </div>
-            <div id="bezirke-list" style="margin-top: 15px;"></div>
-        </div>
-    </section>
-
-    <section class="info-section">
-        <h2 style="font-family:'Orbitron'; text-align:center; font-size: 2rem;">REPUBLIK ÖSTERREICH <span style="color:var(--oe-red)">ÜBERSICHT</span></h2>
-        
-        <div class="info-grid">
-            <div class="info-card glass">
-                <h3>ALLGEMEIN</h3>
-                <ul style="list-style:none; line-height: 2;">
-                    <li><strong>Staatsform:</strong> Parlamentarische Republik</li>
-                    <li><strong>Fläche:</strong> 83.879 km²</li>
-                    <li><strong>Währung:</strong> Euro (€)</li>
-                    <li><strong>Sprache:</strong> Deutsch</li>
-                    <li><strong>Nationalfeiertag:</strong> 26. Oktober</li>
-                </ul>
-            </div>
-
-            <div class="info-card glass">
-                <h3>GEOGRAFIE</h3>
-                <p>Österreich ist ein Binnenstaat in Mitteleuropa. Etwa 60% des Landes sind gebirgig (Alpen). Der höchste Berg ist der <strong>Großglockner (3.798 m)</strong>. Wichtigster Fluss ist die Donau.</p>
-            </div>
-
-            <div class="info-card glass">
-                <h3>KULTUR & GESCHICHTE</h3>
-                <p>Bekannt für klassische Musik (Mozart, Strauss), imperiale Architektur und die lange Geschichte unter den Habsburgern. Heute ein Land mit höchster Lebensqualität weltweit.</p>
-            </div>
+            <h2 id="land-title">Bundesland</h2>
+            <p>Hauptstadt: <strong id="land-cap">-</strong> | Einwohner: <strong id="land-pop">-</strong></p>
+            <div id="bezirke-list" style="margin-top:15px;"></div>
         </div>
     </section>
 
     <footer>
-        &copy; 2026 Erstellt von [Dein Name] | Privates Projekt | 4K Visual Experience | Datenstand 2026
+        &copy; 2026 Erstellt von [Dein Name] | Schüler-Projekt | Datenstand 2026
     </footer>
 </div>
 
 <script>
-    if(/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-        document.getElementById('mobile-block').style.display = 'flex';
-        document.getElementById('loader').style.display = 'none';
+    // 1. SOFORTIGER START DES LOADERS (noch vor der API)
+    let progress = 0;
+    const bar = document.getElementById('l-bar');
+    const percentTxt = document.getElementById('l-percent');
+    
+    const fastLoad = setInterval(() => {
+        progress += Math.random() * 5;
+        if (progress >= 95) {
+            progress = 95; // Stoppt kurz vor Ende, bis API bereit ist
+            clearInterval(fastLoad);
+        }
+        updateBar();
+    }, 80).
+
+    function updateBar() {
+        bar.style.width = progress + '%';
+        percentTxt.innerText = Math.floor(progress) + '%';
     }
 
+    // 2. YOUTUBE API IM HINTERGRUND
     var tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -206,39 +191,32 @@
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
             height: '100%', width: '100%', videoId: 'Zn1S3RtGpWs',
-            playerVars: { 'autoplay': 1, 'mute': 1, 'controls': 0, 'rel': 0, 'vq': 'hd2160' },
-            events: { 'onStateChange': onPlayerStateChange }
+            playerVars: { 'autoplay': 1, 'mute': 1, 'controls': 1, 'rel': 0, 'vq': 'hd2160' },
+            events: { 
+                'onReady': () => {
+                    progress = 100; // API bereit -> Balken voll machen
+                    updateBar();
+                    setTimeout(showVideo, 500);
+                },
+                'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) exitVideo(); }
+            }
         });
     }
 
-    function onPlayerStateChange(event) { if (event.data == YT.PlayerState.ENDED) { exitVideo(); } }
-
-    window.addEventListener('load', () => {
-        const bar = document.getElementById('l-bar');
-        let width = 0;
-        const interval = setInterval(() => {
-            width += Math.random() * 25;
-            if (width >= 100) {
-                width = 100; clearInterval(interval);
-                setTimeout(() => {
-                    document.getElementById('loader').style.opacity = '0';
-                    setTimeout(() => {
-                        document.getElementById('loader').style.display = 'none';
-                        document.getElementById('video-intro').style.display = 'flex';
-                        if(player && player.playVideo) player.playVideo();
-                    }, 800);
-                }, 200);
-            }
-            bar.style.width = width + '%';
-        }, 150);
-    });
+    function showVideo() {
+        document.getElementById('loader').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('video-intro').style.display = 'flex';
+            player.playVideo();
+        }, 800);
+    }
 
     function exitVideo() {
-        if (player) { player.stopVideo(); }
-        const videoIntro = document.getElementById('video-intro');
-        videoIntro.style.opacity = '0';
+        if (player) player.stopVideo();
+        document.getElementById('video-intro').style.opacity = '0';
         setTimeout(() => {
-            videoIntro.style.display = 'none';
+            document.getElementById('video-intro').style.display = 'none';
             document.getElementById('main-content').style.opacity = '1';
             animateValue("counter1", 0, 9124772, 2500);
             animateValue("counter2", 0, 2093, 2000);
@@ -257,18 +235,19 @@
         window.requestAnimationFrame(step);
     }
 
+    // Uhrzeit & Daten (wie zuvor)
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
     const data = {
-        vbg:{name:"Vorarlberg", cap:"Bregenz", pop:"401.674", bez:["Bregenz", "Dornbirn", "Feldkirch", "Bludenz"]},
-        tirol:{name:"Tirol", cap:"Innsbruck", pop:"764.102", bez:["Innsbruck Land", "Kufstein", "Lienz", "Kitzbühel"]},
-        sbg:{name:"Salzburg", cap:"Salzburg", pop:"562.503", bez:["Salzburg Stadt", "Hallein", "Zell am See", "Tamsweg"]},
-        ooe:{name:"Oberösterreich", cap:"Linz", pop:"1.522.825", bez:["Linz Stadt", "Wels", "Steyr", "Braunau"]},
-        noe:{name:"Niederösterreich", cap:"St. Pölten", pop:"1.718.373", bez:["Baden", "Mödling", "Krems", "Tulln"]},
-        stmk:{name:"Steiermark", cap:"Graz", pop:"1.265.463", bez:["Graz Stadt", "Leoben", "Liezen", "Weiz"]},
-        ktn:{name:"Kärnten", cap:"Klagenfurt", pop:"566.147", bez:["Klagenfurt Stadt", "Villach Stadt", "Wolfsberg"]},
-        bgld:{name:"Burgenland", cap:"Eisenstadt", pop:"297.583", bez:["Neusiedl am See", "Oberwart", "Mattersburg"]},
-        wien:{name:"Wien", cap:"Wien", pop:"1.982.097", bez:["Innere Stadt", "Donaustadt", "Favoriten", "Ottakring"]}
+        vbg:{name:"Vorarlberg", cap:"Bregenz", pop:"401.674", bez:["Bregenz", "Bludenz"]},
+        tirol:{name:"Tirol", cap:"Innsbruck", pop:"764.102", bez:["Innsbruck", "Kitzbühel"]},
+        sbg:{name:"Salzburg", cap:"Salzburg", pop:"562.503", bez:["Hallein", "Zell am See"]},
+        ooe:{name:"Oberösterreich", cap:"Linz", pop:"1.522.825", bez:["Linz", "Wels"]},
+        noe:{name:"Niederösterreich", cap:"St. Pölten", pop:"1.718.373", bez:["Baden", "Mödling"]},
+        stmk:{name:"Steiermark", cap:"Graz", pop:"1.265.463", bez:["Graz", "Leoben"]},
+        ktn:{name:"Kärnten", cap:"Klagenfurt", pop:"566.147", bez:["Villach", "Wolfsberg"]},
+        bgld:{name:"Burgenland", cap:"Eisenstadt", pop:"297.583", bez:["Oberwart", "Rust"]},
+        wien:{name:"Wien", cap:"Wien", pop:"1.982.097", bez:["Donaustadt", "Favoriten"]}
     };
 
     function updateInfo(key) {
@@ -280,14 +259,11 @@
         const list = document.getElementById('bezirke-list');
         list.innerHTML = "";
         item.bez.forEach(b => {
-            const tag = document.createElement('span');
-            tag.className = 'bezirk-tag';
-            tag.innerText = b;
-            list.appendChild(tag);
+            const span = document.createElement('span');
+            span.className = 'bezirk-tag'; span.innerText = b;
+            list.appendChild(span);
         });
-        document.getElementById('info-panel').scrollIntoView({ behavior: 'smooth' });
     }
 </script>
-
 </body>
 </html>
