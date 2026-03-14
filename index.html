@@ -57,105 +57,6 @@ background:var(--oe-red);
 transition:.4s;
 }
 
-/* DECISION */
-
-#decision-overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#000;
-z-index:15000;
-display:none;
-align-items:center;
-justify-content:center;
-}
-
-.slider-container{
-display:flex;
-width:100%;
-height:100%;
-}
-
-.choice-pane{
-flex:1;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-position:relative;
-overflow:hidden;
-border:1px solid rgba(255,255,255,.05);
-transition:var(--transition);
-}
-
-.choice-pane:hover{
-flex:1.5;
-background:rgba(237,41,57,.1);
-}
-
-.choice-pane h2{
-font-size:2.5rem;
-letter-spacing:4px;
-z-index:2;
-}
-
-.choice-pane p{
-opacity:.6;
-margin-top:10px;
-z-index:2;
-}
-
-.pane-bg{
-position:absolute;
-width:100%;
-height:100%;
-opacity:.2;
-background-size:cover;
-background-position:center;
-filter:grayscale(1);
-transition:.6s;
-}
-
-.choice-pane:hover .pane-bg{
-opacity:.4;
-filter:grayscale(0);
-transform:scale(1.1);
-}
-
-/* VIDEO */
-
-#video-intro{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#000;
-z-index:16000;
-display:none;
-}
-
-#player{
-width:100%;
-height:100%;
-}
-
-.skip-btn{
-position:absolute;
-bottom:40px;
-right:40px;
-padding:15px 30px;
-background:white;
-color:black;
-border:none;
-border-radius:50px;
-font-weight:800;
-cursor:pointer;
-}
-
 /* NAV */
 
 nav{
@@ -291,29 +192,6 @@ border:1px solid var(--oe-red);
 <div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
 </div>
 
-<div id="decision-overlay">
-<div class="slider-container">
-
-<div class="choice-pane" onclick="startIntro()">
-<div class="pane-bg" style="background-image:url('https://images.unsplash.com/photo-1527004013197-933c4bb611b3?auto=format&fit=crop&q=80&w=1000')"></div>
-<h2>Intro</h2>
-<p>Erlebe Österreich</p>
-</div>
-
-<div class="choice-pane" onclick="directAccess()">
-<div class="pane-bg" style="background-image:url('https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&q=80&w=1000')"></div>
-<h2>Portal</h2>
-<p>Direkt starten</p>
-</div>
-
-</div>
-</div>
-
-<div id="video-intro">
-<div id="player"></div>
-<button class="skip-btn" onclick="directAccess()">SKIP</button>
-</div>
-
 <div id="main-content" style="display:none">
 
 <nav>
@@ -398,11 +276,7 @@ border:1px solid var(--oe-red);
 </div>
 </div>
 
-<script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
-
-let player
 let mapIsVisible=true
 
 const data={
@@ -417,41 +291,22 @@ const data={
 "Burgenland":"Weinregion • Neusiedler See"
 }
 
-function onYouTubeIframeAPIReady(){
-player=new YT.Player('player',{videoId:'Zn1S3RtGpWs'})
-}
-
 window.onload=()=>{
 let bar=document.getElementById("l-bar")
 let w=0
 
 let int=setInterval(()=>{
-
 w+=10
 bar.style.width=w+"%"
-
 if(w>=100){
 clearInterval(int)
 document.getElementById("loader").style.display="none"
-document.getElementById("decision-overlay").style.display="flex"
-}
-
-},100)
-}
-
-function startIntro(){
-document.getElementById("decision-overlay").style.display="none"
-document.getElementById("video-intro").style.display="block"
-player.playVideo()
-}
-
-function directAccess(){
-if(player)player.stopVideo()
-document.getElementById("video-intro").style.display="none"
 document.getElementById("main-content").style.display="block"
 animateValue("c1",0,9100000,2000)
 animateValue("c2",0,9,2000)
 animateValue("c3",0,12,2000)
+}
+},100)
 }
 
 function toggleMap(){
@@ -483,20 +338,14 @@ const obj=document.getElementById(id)
 let startTimestamp=null
 
 const step=(timestamp)=>{
-
 if(!startTimestamp)startTimestamp=timestamp
-
 const progress=Math.min((timestamp-startTimestamp)/duration,1)
-
 obj.innerHTML=Math.floor(progress*(end-start)+start).toLocaleString("de-AT")
-
 if(progress<1)window.requestAnimationFrame(step)
-
 }
 
 window.requestAnimationFrame(step)
 }
-
 </script>
 
 </body>
