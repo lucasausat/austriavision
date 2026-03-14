@@ -6,6 +6,7 @@
 <title>Österreich | Community Info-Portal</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
 <style>
 :root{
@@ -27,7 +28,6 @@ overflow-x:hidden;
 }
 
 /* LOADER */
-
 #loader{
 position:fixed;
 top:0;
@@ -58,7 +58,6 @@ transition:.4s;
 }
 
 /* NAV */
-
 nav{
 background:var(--nav-bg);
 padding:20px 5%;
@@ -81,30 +80,21 @@ padding:40px 5%;
 }
 
 /* MAP */
-
 .map-wrapper{
 background:#111;
-padding:50px;
-border-radius:30px;
+padding:20px;
+border-radius:20px;
 margin:40px 0;
 border:1px solid #222;
+position:relative;
 }
 
-svg path{
-stroke:#000;
-stroke-width:.5;
-fill:#333;
-cursor:pointer;
-transition:.3s;
-}
-
-svg path:hover{
-fill:var(--oe-red);
-filter:drop-shadow(0 0 10px var(--oe-red));
+#map{
+height:500px;
+border-radius:20px;
 }
 
 /* INFO */
-
 .dynamic-info{
 background:var(--card-bg);
 padding:40px;
@@ -127,7 +117,7 @@ border-radius:20px;
 border:1px solid #222;
 }
 
-.toggle-btn{
+.toggle-btn, .video-btn{
 background:transparent;
 color:white;
 border:1px solid #444;
@@ -160,7 +150,6 @@ opacity:.5;
 }
 
 /* MODAL */
-
 .modal{
 display:none;
 position:fixed;
@@ -209,7 +198,6 @@ border:1px solid var(--oe-red);
 </header>
 
 <div class="grid">
-
 <div class="card">
 <h3>Geographie</h3>
 <p>Rund 62 % Österreichs sind Alpenregion. Höchster Berg: Großglockner (3798 m).</p>
@@ -224,29 +212,14 @@ border:1px solid var(--oe-red);
 <h3>Kultur</h3>
 <p>Komponisten wie Mozart, Haydn und Strauss machten Österreich weltberühmt.</p>
 </div>
-
 </div>
 
+<button class="video-btn" onclick="openVideo()">Bundesländer Video ansehen</button>
 <button class="toggle-btn" id="toggleMapBtn" onclick="toggleMap()">Karte einklappen</button>
 
 <div id="mapWrapper" class="map-wrapper">
-
-<h2 style="margin-bottom:30px">Topografische Übersicht Österreich</h2>
-
-<svg viewBox="0 0 800 450" style="width:100%">
-
-<path d="M30,150 L100,140 L120,220 L40,240 Z" onclick="showInfo('Vorarlberg')" />
-<path d="M100,140 L300,160 L320,230 L120,220 Z" onclick="showInfo('Tirol')" />
-<path d="M300,160 L400,150 L430,260 L320,230 Z" onclick="showInfo('Salzburg')" />
-<path d="M400,150 L600,120 L630,220 L430,260 Z" onclick="showInfo('Oberösterreich')" />
-<path d="M600,120 L780,150 L750,290 L630,220 Z" onclick="showInfo('Niederösterreich')" />
-<path d="M680,190 Q700,180 720,200 Q710,220 690,210 Z" fill="#ed2939" onclick="showInfo('Wien')" />
-<path d="M430,260 L630,220 L750,290 L620,380 L460,340 Z" onclick="showInfo('Steiermark')" />
-<path d="M320,230 L460,340 L360,390 Z" onclick="showInfo('Kärnten')" />
-<path d="M750,290 L790,360 L710,430 L660,360 Z" onclick="showInfo('Burgenland')" />
-
-</svg>
-
+<h2 style="margin-bottom:30px">Interaktive Karte Österreich</h2>
+<div id="map"></div>
 </div>
 
 <div id="infoSection" class="dynamic-info">
@@ -276,75 +249,100 @@ border:1px solid var(--oe-red);
 </div>
 </div>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 <script>
-let mapIsVisible=true
+let mapIsVisible = true;
 
-const data={
-"Vorarlberg":"Hauptstadt Bregenz • Bodensee • 400k Einwohner",
-"Tirol":"Hauptstadt Innsbruck • Alpenregion • Wintersportzentrum",
-"Salzburg":"Geburtsort Mozarts • UNESCO Altstadt",
-"Oberösterreich":"Industriezentrum mit Linz",
-"Niederösterreich":"größtes Bundesland Österreichs",
-"Wien":"Bundeshauptstadt • Kultur und Politikzentrum",
-"Steiermark":"Grünes Herz Österreichs • Graz",
-"Kärnten":"Seenlandschaft mit Wörthersee",
-"Burgenland":"Weinregion • Neusiedler See"
-}
+const bundeslaender = [
+    {name: "Wien", coords: [48.2082, 16.3738], info: "Bundeshauptstadt, Kultur & Politikzentrum"},
+    {name: "Steiermark", coords: [47.0707, 15.4395], info: "Grünes Herz Österreichs • Graz"},
+    {name: "Salzburg", coords: [47.8095, 13.0550], info: "Geburtsort Mozarts • UNESCO Altstadt"},
+    {name: "Tirol", coords: [47.2692, 11.4041], info: "Alpenregion • Wintersportzentrum"},
+    {name: "Vorarlberg", coords: [47.2500, 9.7500], info: "Bodensee • Hauptstadt Bregenz"},
+    {name: "Oberösterreich", coords: [48.3069, 14.2858], info: "Industriezentrum Linz"},
+    {name: "Niederösterreich", coords: [48.3069, 15.3795], info: "Größtes Bundesland Österreichs"},
+    {name: "Kärnten", coords: [46.6243, 14.3050], info: "Seenlandschaft • Wörthersee"},
+    {name: "Burgenland", coords: [47.4365, 16.5197], info: "Weinregion • Neusiedler See"}
+];
 
-window.onload=()=>{
-let bar=document.getElementById("l-bar")
-let w=0
-
-let int=setInterval(()=>{
-w+=10
-bar.style.width=w+"%"
-if(w>=100){
-clearInterval(int)
-document.getElementById("loader").style.display="none"
-document.getElementById("main-content").style.display="block"
-animateValue("c1",0,9100000,2000)
-animateValue("c2",0,9,2000)
-animateValue("c3",0,12,2000)
-}
-},100)
+window.onload = () => {
+    let bar = document.getElementById("l-bar");
+    let w = 0;
+    let int = setInterval(() => {
+        w += 10;
+        bar.style.width = w + "%";
+        if (w >= 100) {
+            clearInterval(int);
+            document.getElementById("loader").style.display = "none";
+            document.getElementById("main-content").style.display = "block";
+            animateValue("c1",0,9100000,2000);
+            animateValue("c2",0,9,2000);
+            animateValue("c3",0,12,2000);
+            initMap();
+        }
+    },100);
 }
 
 function toggleMap(){
-mapIsVisible=!mapIsVisible
-let wrapper=document.getElementById("mapWrapper")
-let btn=document.getElementById("toggleMapBtn")
-
-if(!mapIsVisible){
-wrapper.style.display="none"
-btn.innerText="Karte aufklappen"
-}else{
-wrapper.style.display="block"
-btn.innerText="Karte einklappen"
-}
+    mapIsVisible = !mapIsVisible;
+    let wrapper = document.getElementById("mapWrapper");
+    let btn = document.getElementById("toggleMapBtn");
+    if(!mapIsVisible){
+        wrapper.style.display="none";
+        btn.innerText="Karte aufklappen";
+    }else{
+        wrapper.style.display="block";
+        btn.innerText="Karte einklappen";
+    }
 }
 
 function showInfo(name){
-document.getElementById("modalTitle").innerText=name
-document.getElementById("modalBody").innerText=data[name]
-document.getElementById("infoModal").style.display="flex"
+    const info = bundeslaender.find(bl => bl.name === name)?.info || "";
+    document.getElementById("modalTitle").innerText = name;
+    document.getElementById("modalBody").innerText = info;
+    document.getElementById("infoModal").style.display = "flex";
 }
 
 function closeModal(){
-document.getElementById("infoModal").style.display="none"
+    document.getElementById("infoModal").style.display = "none";
 }
 
 function animateValue(id,start,end,duration){
-const obj=document.getElementById(id)
-let startTimestamp=null
-
-const step=(timestamp)=>{
-if(!startTimestamp)startTimestamp=timestamp
-const progress=Math.min((timestamp-startTimestamp)/duration,1)
-obj.innerHTML=Math.floor(progress*(end-start)+start).toLocaleString("de-AT")
-if(progress<1)window.requestAnimationFrame(step)
+    const obj = document.getElementById(id);
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if(!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp-startTimestamp)/duration,1);
+        obj.innerHTML = Math.floor(progress*(end-start)+start).toLocaleString("de-AT");
+        if(progress < 1) window.requestAnimationFrame(step);
+    }
+    window.requestAnimationFrame(step);
 }
 
-window.requestAnimationFrame(step)
+// Leaflet Map initialisieren
+function initMap(){
+    const map = L.map('map').setView([47.5162, 14.5501], 7);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Marker setzen
+    bundeslaender.forEach(bl => {
+        L.marker(bl.coords).addTo(map)
+        .bindPopup(`<b>${bl.name}</b><br>${bl.info}`);
+    });
+
+    // Karte auf Österreich begrenzen
+    const bounds = [[46.3, 9.5],[49.0,17.2]];
+    map.setMaxBounds(bounds);
+    map.on('drag', () => { map.panInsideBounds(bounds, {animate:false}); });
+}
+
+// Video Button
+function openVideo(){
+    window.open("https://www.youtube.com/watch?v=Zn1S3RtGpWs&t=21s","_blank");
 }
 </script>
 
