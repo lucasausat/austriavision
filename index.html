@@ -9,7 +9,6 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
-<!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
@@ -20,7 +19,6 @@
 --text-main:#f1f1f1;
 --card-bg:#1a1a1a;
 --nav-bg:rgba(10,10,10,.95);
---transition:all .5s cubic-bezier(.4,0,.2,1);
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -36,125 +34,69 @@ overflow-x:hidden;
 
 #loader{
 position:fixed;
-top:0;
-left:0;
 width:100%;
 height:100%;
-background:#000;
-z-index:20000;
+background:black;
 display:flex;
-flex-direction:column;
 align-items:center;
 justify-content:center;
+flex-direction:column;
+z-index:20000;
 }
 
 .loader-bar-container{
 width:200px;
-height:2px;
+height:3px;
 background:#222;
 margin-top:20px;
-overflow:hidden;
 }
 
 .loader-bar{
-width:0%;
 height:100%;
-background:var(--oe-red);
-transition:.4s;
+width:0%;
+background:#ed2939;
 }
 
-/* DECISION SLIDER */
+/* INTRO VIDEO */
 
-#decision-overlay{
+#intro{
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
-background:#000;
-z-index:15000;
+background:black;
 display:none;
+z-index:15000;
 }
 
-.slider-container{
-display:flex;
-height:100%;
-}
-
-.choice-pane{
-flex:1;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-position:relative;
-overflow:hidden;
-border:1px solid rgba(255,255,255,.05);
-transition:var(--transition);
-}
-
-.choice-pane:hover{
-flex:1.4;
-background:rgba(237,41,57,.1);
-}
-
-.choice-pane h2{
-font-size:2.5rem;
-letter-spacing:4px;
-z-index:2;
-text-transform:uppercase;
-}
-
-.choice-pane p{
-opacity:.6;
-margin-top:10px;
-z-index:2;
-}
-
-.pane-bg{
-position:absolute;
-top:0;
-left:0;
+#intro iframe{
 width:100%;
 height:100%;
-opacity:.2;
-background-size:cover;
-background-position:center;
-filter:grayscale(1);
-transition:.6s;
+border:none;
 }
 
-.choice-pane:hover .pane-bg{
-opacity:.4;
-filter:grayscale(0);
-transform:scale(1.1);
+/* MAP */
+
+#map{
+height:500px;
+border-radius:20px;
 }
 
-/* NAV */
+/* UI */
 
 nav{
-background:var(--nav-bg);
-padding:20px 5%;
+background:rgba(0,0,0,0.9);
+padding:20px;
 display:flex;
 justify-content:space-between;
-border-bottom:1px solid #222;
 }
-
-.logo{
-font-size:1.5rem;
-font-weight:800;
-}
-
-.logo span{color:var(--oe-red)}
 
 .section-container{
 max-width:1200px;
 margin:auto;
-padding:40px 5%;
+padding:40px;
 }
-
-/* CARDS */
 
 .grid{
 display:grid;
@@ -164,48 +106,27 @@ margin-bottom:40px;
 }
 
 .card{
-background:var(--card-bg);
+background:#1a1a1a;
 padding:30px;
 border-radius:20px;
-border:1px solid #222;
 }
-
-/* MAP */
 
 .map-wrapper{
 background:#111;
-padding:50px;
-border-radius:30px;
-margin:40px 0;
-border:1px solid #222;
-}
-
-#map{
-height:500px;
+padding:40px;
 border-radius:20px;
 }
 
-/* STATS */
-
 .stats-bar{
-background:#000;
-padding:80px 5%;
 display:flex;
 justify-content:space-around;
-flex-wrap:wrap;
-text-align:center;
+padding:80px;
+background:black;
 }
 
 .stat-item h2{
-color:var(--oe-red);
+color:#ed2939;
 font-size:3rem;
-}
-
-footer{
-padding:50px;
-text-align:center;
-border-top:1px solid #222;
-opacity:.5;
 }
 
 </style>
@@ -216,90 +137,61 @@ opacity:.5;
 <!-- LOADER -->
 
 <div id="loader">
-<div style="font-weight:800;font-size:1.5rem;letter-spacing:5px;">A U S T R I A</div>
+
+<h1>AUSTRIA</h1>
+
 <div class="loader-bar-container">
-<div class="loader-bar" id="l-bar"></div>
-</div>
-</div>
-
-<!-- DECISION -->
-
-<div id="decision-overlay">
-
-<div class="slider-container">
-
-<div class="choice-pane" onclick="startIntro()">
-
-<div class="pane-bg"
-style="background-image:url('https://images.unsplash.com/photo-1527004013197-933c4bb611b3?auto=format&fit=crop&q=80&w=1000')">
-</div>
-
-<h2>Intro</h2>
-<p>Erlebe Österreich</p>
-
-</div>
-
-<div class="choice-pane" onclick="directAccess()">
-
-<div class="pane-bg"
-style="background-image:url('https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&q=80&w=1000')">
-</div>
-
-<h2>Portal</h2>
-<p>Direkt starten</p>
-
+<div class="loader-bar" id="bar"></div>
 </div>
 
 </div>
+
+<!-- INTRO VIDEO -->
+
+<div id="intro">
+
+<iframe
+src="https://www.youtube.com/embed/Zn1S3RtGpWs?autoplay=1&mute=1&controls=0&showinfo=0&rel=0">
+</iframe>
+
 </div>
 
-<!-- MAIN -->
+<!-- MAIN CONTENT -->
 
-<div id="main-content" style="display:none">
+<div id="main" style="display:none">
 
 <nav>
 
-<div class="logo">ÖSTERREICH<span>.hub</span></div>
-<div style="font-size:.7rem;color:var(--oe-red);font-weight:800;">2026</div>
+<h2>Österreich Hub</h2>
 
 </nav>
 
 <div class="section-container">
 
-<header style="margin-bottom:60px">
-
-<h1 style="font-size:4rem;font-weight:800">Alpine Excellence.</h1>
-
-<p style="font-size:1.5rem;opacity:.5;margin-top:15px">
-Entdecke das Herz Europas.
-</p>
-
-</header>
+<h1>Alpine Excellence</h1>
 
 <div class="grid">
 
 <div class="card">
 <h3>Kultur</h3>
-<p>Von den Wiener Philharmonikern bis zur modernen Kunstszene.</p>
+<p>Wiener Musik, Theater und Museen.</p>
 </div>
 
 <div class="card">
 <h3>Geographie</h3>
-<p>Dominiert von den Alpen und der Donau.</p>
+<p>Die Alpen prägen Österreich.</p>
 </div>
 
 <div class="card">
 <h3>Wirtschaft</h3>
-<p>Technologie, Tourismus und Lebensqualität.</p>
+<p>Tourismus und Technologie.</p>
 </div>
 
 </div>
 
 <div class="map-wrapper">
 
-<h2 style="margin-bottom:30px">
-Interaktive Österreich Karte
-</h2>
+<h2>Interaktive Österreich Karte</h2>
 
 <div id="map"></div>
 
@@ -326,11 +218,7 @@ Interaktive Österreich Karte
 
 </section>
 
-<footer>Community Projekt Österreich 2026</footer>
-
 </div>
-
-<!-- Leaflet -->
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
@@ -340,8 +228,8 @@ Interaktive Österreich Karte
 
 window.onload=()=>{
 
-let bar=document.getElementById("l-bar")
 let w=0
+let bar=document.getElementById("bar")
 
 let int=setInterval(()=>{
 
@@ -353,34 +241,36 @@ if(w>=100){
 clearInterval(int)
 
 document.getElementById("loader").style.display="none"
-document.getElementById("decision-overlay").style.display="block"
+
+startIntro()
 
 }
 
-},100)
+},120)
 
 }
 
-/* intro */
+/* cinematic intro */
 
 function startIntro(){
 
-alert("Intro Video könnte hier starten 🎬")
+let intro=document.getElementById("intro")
 
-}
+intro.style.display="block"
 
-/* open portal */
+setTimeout(()=>{
 
-function directAccess(){
+intro.style.display="none"
 
-document.getElementById("decision-overlay").style.display="none"
-document.getElementById("main-content").style.display="block"
+document.getElementById("main").style.display="block"
 
 initMap()
 
 animateValue("c1",0,9100000,2000)
 animateValue("c2",0,9,2000)
 animateValue("c3",0,12,2000)
+
+},10000)
 
 }
 
@@ -391,11 +281,12 @@ function initMap(){
 const map=L.map("map").setView([47.6,14.2],7)
 
 L.tileLayer(
-"https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
 {
-maxZoom:17,
-attribution:"Map data OpenTopoMap"
+maxZoom:18
 }).addTo(map)
+
+/* Städte */
 
 const cities=[
 
@@ -403,11 +294,7 @@ const cities=[
 ["Salzburg",47.8095,13.055],
 ["Innsbruck",47.2692,11.4041],
 ["Graz",47.0707,15.4395],
-["Linz",48.3069,14.2858],
-["Klagenfurt",46.6365,14.3122],
-["Bregenz",47.5031,9.7471],
-["St. Pölten",48.2035,15.6382],
-["Eisenstadt",47.8456,16.5236]
+["Linz",48.3069,14.2858]
 
 ]
 
@@ -419,25 +306,83 @@ L.marker([c[1],c[2]])
 
 })
 
+/* Bundesländer */
+
+fetch("https://raw.githubusercontent.com/ginseng666/GeoJSON-TopoJSON-Austria/master/2018/simplified-99.9/laender_99.9.geo.json")
+.then(res=>res.json())
+.then(data=>{
+
+L.geoJSON(data,{
+
+style:{
+color:"#ed2939",
+weight:2,
+fillOpacity:0.3
+},
+
+onEachFeature:function(feature,layer){
+
+layer.on({
+
+mouseover:function(e){
+
+e.target.setStyle({
+fillOpacity:0.6,
+weight:3
+})
+
+},
+
+mouseout:function(e){
+
+e.target.setStyle({
+fillOpacity:0.3,
+weight:2
+})
+
+}
+
+})
+
+let name=feature.properties.name
+
+layer.bindPopup(
+
+"<h2>"+name+"</h2>"+
+"<p>Bundesland Österreichs</p>"+
+"<p>Beliebte Region für Tourismus.</p>"
+
+)
+
+}
+
+}).addTo(map)
+
+})
+
 }
 
 /* stats */
 
 function animateValue(id,start,end,duration){
 
-const obj=document.getElementById(id)
+let obj=document.getElementById(id)
 
 let startTimestamp=null
 
-const step=(timestamp)=>{
+function step(timestamp){
 
 if(!startTimestamp)startTimestamp=timestamp
 
-const progress=Math.min((timestamp-startTimestamp)/duration,1)
+let progress=Math.min((timestamp-startTimestamp)/duration,1)
 
-obj.innerHTML=Math.floor(progress*(end-start)+start).toLocaleString("de-AT")
+obj.innerHTML=Math.floor(progress*(end-start)+start)
 
-if(progress<1)window.requestAnimationFrame(step)
+if(progress<1){
+
+window.requestAnimationFrame(step)
+
+}
 
 }
 
