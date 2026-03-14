@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -19,17 +20,19 @@
 --text-main:#f1f1f1;
 --card-bg:#1a1a1a;
 --nav-bg:rgba(10,10,10,.95);
+--transition:all .5s cubic-bezier(.4,0,.2,1);
 }
 
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
 background:var(--bg-dark);
 color:var(--text-main);
 font-family:'Inter',sans-serif;
+overflow-x:hidden;
 }
 
-/* loader */
+/* LOADER */
 
 #loader{
 position:fixed;
@@ -57,9 +60,10 @@ overflow:hidden;
 width:0%;
 height:100%;
 background:var(--oe-red);
+transition:.4s;
 }
 
-/* decision */
+/* DECISION SLIDER */
 
 #decision-overlay{
 position:fixed;
@@ -68,8 +72,8 @@ left:0;
 width:100%;
 height:100%;
 background:#000;
-display:none;
 z-index:15000;
+display:none;
 }
 
 .slider-container{
@@ -84,31 +88,50 @@ flex-direction:column;
 align-items:center;
 justify-content:center;
 cursor:pointer;
+position:relative;
+overflow:hidden;
 border:1px solid rgba(255,255,255,.05);
-transition:.4s;
+transition:var(--transition);
 }
 
 .choice-pane:hover{
-flex:1.3;
+flex:1.4;
 background:rgba(237,41,57,.1);
 }
 
 .choice-pane h2{
 font-size:2.5rem;
 letter-spacing:4px;
+z-index:2;
+text-transform:uppercase;
 }
 
-.choice-pane p{opacity:.6;margin-top:10px;}
+.choice-pane p{
+opacity:.6;
+margin-top:10px;
+z-index:2;
+}
 
 .pane-bg{
 position:absolute;
+top:0;
+left:0;
 width:100%;
 height:100%;
 opacity:.2;
 background-size:cover;
 background-position:center;
 filter:grayscale(1);
+transition:.6s;
 }
+
+.choice-pane:hover .pane-bg{
+opacity:.4;
+filter:grayscale(0);
+transform:scale(1.1);
+}
+
+/* NAV */
 
 nav{
 background:var(--nav-bg);
@@ -130,6 +153,8 @@ max-width:1200px;
 margin:auto;
 padding:40px 5%;
 }
+
+/* CARDS */
 
 .grid{
 display:grid;
@@ -160,13 +185,15 @@ height:500px;
 border-radius:20px;
 }
 
+/* STATS */
+
 .stats-bar{
 background:#000;
 padding:80px 5%;
 display:flex;
 justify-content:space-around;
-text-align:center;
 flex-wrap:wrap;
+text-align:center;
 }
 
 .stat-item h2{
@@ -186,6 +213,8 @@ opacity:.5;
 
 <body>
 
+<!-- LOADER -->
+
 <div id="loader">
 <div style="font-weight:800;font-size:1.5rem;letter-spacing:5px;">A U S T R I A</div>
 <div class="loader-bar-container">
@@ -193,29 +222,58 @@ opacity:.5;
 </div>
 </div>
 
+<!-- DECISION -->
+
 <div id="decision-overlay">
+
 <div class="slider-container">
 
+<div class="choice-pane" onclick="startIntro()">
+
+<div class="pane-bg"
+style="background-image:url('https://images.unsplash.com/photo-1527004013197-933c4bb611b3?auto=format&fit=crop&q=80&w=1000')">
+</div>
+
+<h2>Intro</h2>
+<p>Erlebe Österreich</p>
+
+</div>
+
 <div class="choice-pane" onclick="directAccess()">
+
+<div class="pane-bg"
+style="background-image:url('https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&q=80&w=1000')">
+</div>
+
 <h2>Portal</h2>
 <p>Direkt starten</p>
+
 </div>
 
 </div>
 </div>
 
-<div id="main-content" style="display:none;">
+<!-- MAIN -->
+
+<div id="main-content" style="display:none">
 
 <nav>
+
 <div class="logo">ÖSTERREICH<span>.hub</span></div>
 <div style="font-size:.7rem;color:var(--oe-red);font-weight:800;">2026</div>
+
 </nav>
 
 <div class="section-container">
 
-<header style="margin-bottom:60px;">
-<h1 style="font-size:4rem;font-weight:800;">Alpine Excellence.</h1>
-<p style="font-size:1.5rem;opacity:.5;margin-top:15px;">Entdecke das Herz Europas.</p>
+<header style="margin-bottom:60px">
+
+<h1 style="font-size:4rem;font-weight:800">Alpine Excellence.</h1>
+
+<p style="font-size:1.5rem;opacity:.5;margin-top:15px">
+Entdecke das Herz Europas.
+</p>
+
 </header>
 
 <div class="grid">
@@ -239,7 +297,9 @@ opacity:.5;
 
 <div class="map-wrapper">
 
-<h2 style="margin-bottom:30px;">Interaktive Österreich Karte</h2>
+<h2 style="margin-bottom:30px">
+Interaktive Österreich Karte
+</h2>
 
 <div id="map"></div>
 
@@ -248,19 +308,35 @@ opacity:.5;
 </div>
 
 <section class="stats-bar">
-<div class="stat-item"><h2 id="c1">0</h2><p>Einwohner</p></div>
-<div class="stat-item"><h2 id="c2">0</h2><p>Bundesländer</p></div>
-<div class="stat-item"><h2 id="c3">0</h2><p>UNESCO</p></div>
+
+<div class="stat-item">
+<h2 id="c1">0</h2>
+<p>Einwohner</p>
+</div>
+
+<div class="stat-item">
+<h2 id="c2">0</h2>
+<p>Bundesländer</p>
+</div>
+
+<div class="stat-item">
+<h2 id="c3">0</h2>
+<p>UNESCO</p>
+</div>
+
 </section>
 
 <footer>Community Projekt Österreich 2026</footer>
 
 </div>
 
-<!-- Leaflet JS -->
+<!-- Leaflet -->
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
+
+/* loader */
 
 window.onload=()=>{
 
@@ -273,16 +349,27 @@ w+=10
 bar.style.width=w+"%"
 
 if(w>=100){
+
 clearInterval(int)
+
 document.getElementById("loader").style.display="none"
 document.getElementById("decision-overlay").style.display="block"
+
 }
 
 },100)
 
 }
 
-/* enter site */
+/* intro */
+
+function startIntro(){
+
+alert("Intro Video könnte hier starten 🎬")
+
+}
+
+/* open portal */
 
 function directAccess(){
 
@@ -310,11 +397,10 @@ maxZoom:17,
 attribution:"Map data OpenTopoMap"
 }).addTo(map)
 
-/* city markers */
-
 const cities=[
+
 ["Wien",48.2082,16.3738],
-["Salzburg",47.8095,13.0550],
+["Salzburg",47.8095,13.055],
 ["Innsbruck",47.2692,11.4041],
 ["Graz",47.0707,15.4395],
 ["Linz",48.3069,14.2858],
@@ -322,21 +408,25 @@ const cities=[
 ["Bregenz",47.5031,9.7471],
 ["St. Pölten",48.2035,15.6382],
 ["Eisenstadt",47.8456,16.5236]
+
 ]
 
 cities.forEach(c=>{
+
 L.marker([c[1],c[2]])
 .addTo(map)
 .bindPopup("<b>"+c[0]+"</b>")
+
 })
 
 }
 
-/* stats animation */
+/* stats */
 
 function animateValue(id,start,end,duration){
 
 const obj=document.getElementById(id)
+
 let startTimestamp=null
 
 const step=(timestamp)=>{
