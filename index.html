@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Österreich | Interaktives Portal</title>
+    <title>Österreich | Info-Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -25,14 +25,13 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); overflow-x: hidden; transition: background-color 0.5s ease; }
 
-        /* HINTERGRUND GEÄNDERT AUF WIEN */
         .bg-parallax { 
             position: fixed; top: 0; left: 0; width: 110%; height: 110%; 
-            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1)), 
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2)), 
             url('https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&q=80&w=1920'); 
             background-size: cover; background-position: center; 
             z-index: -1; transform: translate(-5%, -5%); 
-            filter: grayscale(10%) blur(1px); opacity: 0.4; 
+            filter: grayscale(10%) blur(1px); opacity: 0.5; 
         }
 
         #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 10000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -48,35 +47,29 @@
         nav { background: var(--nav-bg); padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--oe-red); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
         .logo { font-weight: 800; font-size: 1.4rem; }
         .logo span { color: var(--oe-red); }
-        .nav-tools { display: flex; gap: 20px; align-items: center; }
-        .theme-toggle { cursor: pointer; font-size: 1.2rem; }
 
         #main-content { display: none; opacity: 0; }
-        header { padding: 100px 5% 50px; text-align: center; }
-        header h1 { font-size: 3.5rem; margin-bottom: 10px; }
+        header { padding: 80px 5% 40px; text-align: center; }
+        header h1 { font-size: 3rem; margin-bottom: 10px; }
 
-        .section-container { max-width: 1200px; margin: 0 auto; padding: 40px 5%; }
+        .section-container { max-width: 1200px; margin: 0 auto; padding: 20px 5%; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
-        .card { background: var(--card-bg); padding: 30px; border-radius: 15px; border: 1px solid rgba(0,0,0,0.05); transition: var(--transition); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .card:hover { transform: translateY(-10px); border-color: var(--oe-red); }
-        .card h3 { color: var(--oe-red); margin-bottom: 10px; }
-        .card-tag { display: inline-block; padding: 4px 10px; background: rgba(237, 41, 57, 0.1); color: var(--oe-red); font-size: 0.75rem; border-radius: 20px; margin-bottom: 10px; font-weight: 600; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 15px; border: 1px solid rgba(0,0,0,0.05); transition: var(--transition); box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        .card:hover { transform: translateY(-8px); border-color: var(--oe-red); }
+        .card h3 { color: var(--oe-red); margin-bottom: 8px; }
 
-        .filter-container { margin-bottom: 30px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-        .filter-btn { padding: 10px 20px; border: 1px solid var(--oe-red); background: transparent; color: var(--text-main); border-radius: 30px; cursor: pointer; transition: 0.3s; }
-        .filter-btn.active { background: var(--oe-red); color: white; }
+        /* INTERAKTIVE KARTE DESIGN */
+        .map-container { background: var(--card-bg); padding: 30px; border-radius: 20px; margin: 40px 0; text-align: center; border: 1px solid rgba(0,0,0,0.1); }
+        svg { filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); }
+        svg path { fill: #c1e1c1; stroke: #2d5a27; stroke-width: 2; transition: 0.3s; cursor: pointer; }
+        svg path:hover { fill: #4CAF50; transform: scale(1.01); }
+        .map-label { font-size: 1.2rem; font-weight: 800; color: var(--oe-red); margin-top: 15px; min-height: 1.5em; }
 
-        .map-container { background: var(--card-bg); padding: 30px; border-radius: 20px; margin: 40px 0; text-align: center; border: 1px solid rgba(0,0,0,0.05); }
-        svg path { fill: #ddd; transition: 0.3s; cursor: pointer; stroke: #fff; stroke-width: 1; }
-        svg path:hover { fill: var(--oe-red); }
+        .stats-bar { background: #1a1a1a; color: #fff; padding: 60px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px; margin-top: 50px; }
+        .stat-item h2 { color: var(--oe-red); font-size: 2.5rem; }
 
-        .weather-box { background: var(--oe-red); color: white; border-radius: 15px; padding: 25px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(237, 41, 57, 0.3); }
-        .stats-bar { background: #1a1a1a; color: #fff; padding: 60px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px; }
-        .stat-item h2 { color: var(--oe-red); font-size: 3rem; }
-
-        .book-icon { font-size: 60px; cursor: pointer; transition: 0.5s; display: inline-block; margin-bottom: 10px; }
         footer { padding: 40px; background: var(--card-bg); text-align: center; font-size: 0.9rem; opacity: 0.7; border-top: 1px solid rgba(0,0,0,0.05); }
-        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s all ease-out; }
+        .reveal { opacity: 0; transform: translateY(20px); transition: 0.6s all ease-out; }
         .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
 </head>
@@ -85,15 +78,15 @@
 <div class="bg-parallax" id="parallax"></div>
 
 <div id="loader">
-    <div style="font-weight: 800; font-size: 1.8rem; letter-spacing: 2px;">AUT <span style="color:var(--oe-red)">PROJEKT</span></div>
+    <div style="font-weight: 800; font-size: 1.8rem; letter-spacing: 2px;">AUT <span style="color:var(--oe-red)">INFO</span></div>
     <div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
 </div>
 
 <div id="decision-gui">
     <div class="gui-box">
         <h2>Servus! 🇦🇹</h2>
-        <p style="margin: 20px 0;">Bereit für eine Reise durch Österreich?</p>
-        <button class="gui-btn btn-video" onclick="startWithVideo()">🎬 Intro starten (4K)</button>
+        <p style="margin: 20px 0;">Willkommen beim Österreich-Portal.</p>
+        <button class="gui-btn btn-video" onclick="startWithVideo()">🎬 Intro starten</button>
         <button class="gui-btn btn-direct" onclick="exitVideo()">➡️ Direkt zum Portal</button>
     </div>
 </div>
@@ -107,203 +100,111 @@
 
 <div id="main-content">
     <nav>
-        <div class="logo">ÖSTERREICH<span>.vlog</span></div>
-        <div class="nav-tools">
-            <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
-            <div style="font-size: 0.7rem; font-weight: 600;">Beta v2.1</div>
-        </div>
+        <div class="logo">ÖSTERREICH<span>.info</span></div>
+        <div class="nav-tools"><div class="theme-toggle" onclick="toggleTheme()" style="cursor:pointer">🌓</div></div>
     </nav>
 
     <header>
-        <h1 class="reveal">Willkommen in Österreich.</h1>
-        <p class="reveal">Interaktive Planung & Informationen für dein nächstes Abenteuer.</p>
+        <h1 class="reveal">Die Republik im Überblick</h1>
+        <p class="reveal">Fakten, Kultur und Sehenswürdigkeiten.</p>
     </header>
 
     <div class="section-container">
-        <div class="weather-box reveal">
-            <div>
-                <h4 id="city-name">Wien | Aktueller Status</h4>
-                <p id="weather-desc">Lade Live-Daten...</p>
-                <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">Währung: Euro (€) | Zeitzone: UTC+1</p>
-            </div>
-            <h2 id="temp">--°C</h2>
-        </div>
-
-        <h2 class="reveal" style="margin-bottom: 25px; text-align: center;">Reise-Essentials</h2>
-        <div class="grid reveal" style="margin-bottom: 60px;">
+        <h2 class="reveal" style="margin-bottom: 25px;">Allgemeine Informationen</h2>
+        <div class="grid reveal" style="margin-bottom: 50px;">
             <div class="card">
-                <span class="card-tag">Planung</span>
-                <h3>Beste Reisezeit</h3>
-                <p><b>Mai - Sept:</b> Ideal zum Wandern & Sightseeing.<br><b>Dez - März:</b> Perfekt für Wintersport & Weihnachtsmärkte.</p>
+                <h3>Kultur & Erbe</h3>
+                <p>Österreich ist weltbekannt für seine Musikgeschichte (Mozart, Strauss) und prunkvolle Architektur aus der Kaiserzeit (Habsburger Monarchie).</p>
             </div>
             <div class="card">
-                <span class="card-tag">Anreise</span>
-                <h3>Transport</h3>
-                <p>Top-Anbindung via Flughafen Wien (VIE). Innerhalb des Landes sind die <b>ÖBB</b> Züge die beste Wahl für Reisende.</p>
+                <h3>Top Sehenswürdigkeiten</h3>
+                <p>Schloss Schönbrunn (Wien), Festung Hohensalzburg, das Goldene Dachl (Innsbruck) und die Welterbestätte Hallstatt.</p>
             </div>
             <div class="card">
-                <span class="card-tag">Kultur</span>
-                <h3>Wussten Sie schon?</h3>
-                <p>Leitungswasser hat in fast ganz Österreich <b>Quellwasser-Qualität</b>. Trinkgeld von ca. 10% ist in Restaurants üblich.</p>
+                <h3>Geografie</h3>
+                <p>Etwa 60% des Landes sind gebirgig (Alpen). Der höchste Berg ist der Großglockner mit 3.798 Metern.</p>
             </div>
         </div>
 
         <div class="map-container reveal">
-            <h3>Digitale Landkarte</h3>
-            <p id="map-info">Wähle ein Bundesland für Details</p>
-            <svg viewBox="0 0 1000 600" style="max-width: 600px; width: 100%; margin-top: 20px;">
-                <path d="M100,200 L300,200 L250,300 L50,300 Z" data-name="Vorarlberg" />
-                <path d="M300,200 L500,200 L450,350 L250,300 Z" data-name="Tirol" />
-                <path d="M500,200 L650,150 L650,300 L450,350 Z" data-name="Salzburg" />
-                <path d="M650,150 L850,100 L900,250 L650,300 Z" data-name="Oberösterreich" />
-                <path d="M850,100 L980,150 L950,350 L900,250 Z" data-name="Niederösterreich" />
-                <path d="M920,200 L960,200 L960,250 L920,250 Z" data-name="Wien" fill="#ed2939" />
-                <path d="M650,300 L900,250 L850,450 L600,400 Z" data-name="Steiermark" />
-                <path d="M450,350 L650,300 L600,400 L400,450 Z" data-name="Kärnten" />
-                <path d="M950,350 L980,150 L1000,450 L900,500 Z" data-name="Burgenland" />
+            <h3>Interaktive Bundesländer-Karte</h3>
+            <p>Fahre über die Karte für Informationen</p>
+            <div class="map-label" id="map-info">Österreich</div>
+            
+            <svg viewBox="0 0 800 450" style="width: 100%; height: auto;">
+                <path d="M20,180 L80,180 L90,230 L30,240 Z" data-name="Vorarlberg" />
+                <path d="M80,180 L280,180 L290,240 L150,250 L90,230 Z" data-name="Tirol" />
+                <path d="M280,180 L380,150 L420,250 L290,240 Z" data-name="Salzburg" />
+                <path d="M380,150 L580,100 L620,200 L420,250 Z" data-name="Oberösterreich" />
+                <path d="M580,100 L750,130 L730,280 L620,200 Z" data-name="Niederösterreich" />
+                <path d="M660,185 Q680,175 700,195 Q690,215 670,205 Z" data-name="Wien" fill="#ed2939" stroke="#fff" />
+                <path d="M420,250 L620,200 L730,280 L600,380 L450,330 Z" data-name="Steiermark" />
+                <path d="M290,240 L450,330 L350,380 Z" data-name="Kärnten (West)" />
+                <path d="M730,280 L780,350 L700,420 L650,350 Z" data-name="Burgenland" />
             </svg>
         </div>
-
-        <section style="text-align: center;">
-            <div class="book-icon" onclick="toggleData()">📖</div>
-            <h3 id="toggle-label" style="margin-bottom: 40px;">Regionen-Explorer</h3>
-
-            <div id="region-data" style="display:none;">
-                <div class="filter-container">
-                    <button class="filter-btn active" onclick="filterCards('all')">Alle</button>
-                    <button class="filter-btn" onclick="filterCards('berge')">🏔️ Natur/Berge</button>
-                    <button class="filter-btn" onclick="filterCards('stadt')">🏙️ Stadt/Kultur</button>
-                    <button class="filter-btn" onclick="filterCards('see')">🌊 Seen/Relax</button>
-                </div>
-                <div class="grid" id="region-grid">
-                    <div class="card" data-cat="stadt">
-                        <h3>Wien</h3>
-                        <p>Kaffeehauskultur, Schloss Schönbrunn und moderne Kunst. Das Herz Europas.</p>
-                    </div>
-                    <div class="card" data-cat="berge">
-                        <h3>Tirol</h3>
-                        <p>Die Alpen pur. Eldorado für Skifahrer im Winter und Wanderer im Sommer.</p>
-                    </div>
-                    <div class="card" data-cat="see">
-                        <h3>Kärnten</h3>
-                        <p>Wörthersee und Faaker See. Mediterranes Flair im Süden Österreichs.</p>
-                    </div>
-                    <div class="card" data-cat="berge">
-                        <h3>Salzburg</h3>
-                        <p>Geburtsstadt Mozarts. Atemberaubende Architektur und alpine Bergwelt.</p>
-                    </div>
-                    <div class="card" data-cat="see">
-                        <h3>Burgenland</h3>
-                        <p>Neusiedler See, Weinbau und weite Ebenen. Perfekt für Radtouren.</p>
-                    </div>
-                    <div class="card" data-cat="stadt">
-                        <h3>Oberösterreich</h3>
-                        <p>Zukunftsstadt Linz und das idyllische Salzkammergut mit Hallstatt.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
 
     <section class="stats-bar">
         <div class="stat-item"><h2 id="count1">0</h2><p>Einwohner</p></div>
-        <div class="stat-item"><h2 id="count2">0</h2><p>Gemeinden</p></div>
-        <div class="stat-item"><h2 id="count3">0</h2><p>Nationalparks</p></div>
+        <div class="stat-item"><h2 id="count2">0</h2><p>Bundesländer</p></div>
+        <div class="stat-item"><h2 id="count3">0</h2><p>Welterbestätten</p></div>
     </section>
 
-    <footer>&copy; 2026 Erstellt von [Dein Name] | 16 Jahre | Dein Guide für Österreich</footer>
+    <footer>&copy; 2026 Info-Portal Österreich | Dein Name</footer>
 </div>
 
 <script>
-    async function fetchWeather() {
-        try {
-            const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=48.2085&longitude=16.3725&current_weather=true');
-            const data = await res.json();
-            document.getElementById('temp').innerText = Math.round(data.current_weather.temperature) + "°C";
-            document.getElementById('weather-desc').innerText = "Wetter: " + (data.current_weather.is_day ? "Sonnig/Heiter" : "Klarer Himmel") + " • Wind: " + data.current_weather.windspeed + " km/h";
-        } catch (e) { console.error("Wetter konnte nicht geladen werden"); }
-    }
-
-    function filterCards(cat) {
-        const cards = document.querySelectorAll('#region-grid .card');
-        const btns = document.querySelectorAll('.filter-btn');
-        btns.forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-        cards.forEach(card => {
-            if (cat === 'all' || card.getAttribute('data-cat') === cat) { card.style.display = 'block'; } 
-            else { card.style.display = 'none'; }
-        });
-    }
-
+    // Karte Logik
     document.querySelectorAll('svg path').forEach(path => {
-        path.onmouseover = () => document.getElementById('map-info').innerText = "Region: " + path.getAttribute('data-name');
-        path.onmouseout = () => document.getElementById('map-info').innerText = "Wähle ein Bundesland für Details";
+        path.onmouseover = () => {
+            document.getElementById('map-info').innerText = path.getAttribute('data-name');
+        };
+        path.onmouseout = () => {
+            document.getElementById('map-info').innerText = "Österreich";
+        };
     });
 
+    // Theme Toggle
     function toggleTheme() {
-        const body = document.body;
-        body.setAttribute('data-theme', body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     }
 
-    function toggleData() {
-        let rd = document.getElementById('region-data');
-        rd.style.display = rd.style.display === 'none' ? 'block' : 'none';
-    }
-
-    document.addEventListener('mousemove', (e) => {
-        const moveX = (e.clientX - window.innerWidth / 2) * 0.01;
-        const moveY = (e.clientY - window.innerHeight / 2) * 0.01;
-        const p = document.getElementById('parallax');
-        if(p) p.style.transform = `translate(calc(-5% + ${moveX}px), calc(-5% + ${moveY}px))`;
-    });
-
-    var player;
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-            height: '100%', width: '100%',
-            videoId: 'Zn1S3RtGpWs',
-            playerVars: { 'autoplay': 0, 'controls': 1 },
-            events: { 'onStateChange': (e) => { if(e.data == YT.PlayerState.ENDED) exitVideo(); } }
-        });
-    }
-
+    // Loader
     window.onload = () => {
-        fetchWeather();
         let bar = document.getElementById('l-bar');
         let w = 0;
         let int = setInterval(() => {
-            w += 5;
+            w += 10;
+            bar.style.width = w + '%';
             if(w >= 100) {
                 clearInterval(int);
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('decision-gui').style.display = 'flex';
             }
-            bar.style.width = w + '%';
         }, 50);
     };
 
+    // YouTube & Nav
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', { videoId: 'Zn1S3RtGpWs' });
+    }
     function startWithVideo() {
         document.getElementById('decision-gui').style.display = 'none';
         document.getElementById('video-intro').style.display = 'flex';
         player.playVideo();
     }
-
     function exitVideo() {
         if(player) player.stopVideo();
         document.getElementById('video-intro').style.display = 'none';
         document.getElementById('decision-gui').style.display = 'none';
-        let main = document.getElementById('main-content');
-        main.style.display = 'block';
+        document.getElementById('main-content').style.display = 'block';
         setTimeout(() => { 
-            main.style.opacity = '1'; 
-            animateValue("count1", 0, 9104772, 2000);
-            animateValue("count2", 0, 2093, 2000);
-            animateValue("count3", 0, 6, 2000);
+            document.getElementById('main-content').style.opacity = '1'; 
+            animateValue("count1", 0, 9100000, 1500);
+            animateValue("count2", 0, 9, 1500);
+            animateValue("count3", 0, 12, 1500);
             handleScrollReveal();
         }, 50);
     }
@@ -328,5 +229,6 @@
         reveals.forEach(r => observer.observe(r));
     }
 </script>
+<script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>
