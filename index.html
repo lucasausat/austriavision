@@ -1,96 +1,147 @@
-<div class="maintenance-box">
-    <div class="label-group">
-        <span>System-Rekonstruktion</span>
-        <span class="percent-counter">20%</span>
-    </div>
-    
-    <div class="bar-bg">
-        <div class="bar-fill">
-            <div class="bar-scan"></div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wartung | Österreich.hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --oe-red: #ed2939;
+            --bg-dark: #0a0a0a;
+            --text-main: #f1f1f1;
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Hintergrund-Glow */
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: var(--oe-red);
+            filter: blur(150px);
+            opacity: 0.1;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+        }
+
+        .maintenance-box {
+            background: #000;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 1px solid #1a1a1a;
+            text-align: left;
+        }
+
+        .label-group {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .bar-bg {
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--oe-red);
+            box-shadow: 0 0 15px var(--oe-red);
+            width: 0%;
+            position: relative;
+            animation: load 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .bar-scan {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: scan 2s infinite linear;
+            animation-delay: 2.5s;
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--oe-red);
+            border-radius: 50%;
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes load { to { width: 20%; } }
+        @keyframes scan { from { left: -100%; } to { left: 100%; } }
+        @keyframes pulse { from { opacity: 1; } to { opacity: 0.3; } }
+
+        .percent-counter { color: var(--oe-red); font-weight: 800; }
+        h1 { font-weight: 800; margin-bottom: 10px; }
+        p { color: #666; font-size: 0.9rem; line-height: 1.5; }
+    </style>
+</head>
+<body>
+
+    <div class="glow"></div>
+
+    <div class="container">
+        <h1>Offline.</h1>
+        <p>Wir strukturieren den Österreich.hub komplett neu für euch. Rückkehr voraussichtlich Ende März.</p>
+
+        <div class="maintenance-box">
+            <div class="label-group">
+                <span>System-Rekonstruktion</span>
+                <span class="percent-counter">20%</span>
+            </div>
+            
+            <div class="bar-bg">
+                <div class="bar-fill"><div class="bar-scan"></div></div>
+            </div>
+            
+            <div class="status-info">
+                <div class="dot"></div>
+                <span>Initialisierung der Datenbank-Struktur...</span>
+            </div>
         </div>
     </div>
-    
-    <div class="status-info">
-        <div class="dot"></div>
-        <span class="typing-text">Initialisierung der neuen Datenbank-Struktur...</span>
-    </div>
-</div>
 
-<style>
-    /* 1. Ladebalken: Stoppt exakt bei 20% */
-    .bar-fill {
-        height: 100%;
-        background: var(--oe-red);
-        box-shadow: 0 0 20px rgba(237, 41, 57, 0.5);
-        width: 0%;
-        position: relative;
-        overflow: hidden;
-        animation: load 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    }
-
-    @keyframes load {
-        from { width: 0%; }
-        to { width: 20%; }
-    }
-
-    /* 2. Der Lichtstreifen (Scan), der über den 20%-Balken läuft */
-    .bar-scan {
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-            90deg, 
-            transparent, 
-            rgba(255, 255, 255, 0.3), 
-            transparent
-        );
-        animation: scan 2s infinite linear;
-        animation-delay: 2.5s; /* Startet wenn der Balken die 20% erreicht hat */
-    }
-
-    @keyframes scan {
-        from { left: -100%; }
-        to { left: 100%; }
-    }
-
-    /* 3. Text-Animationen (Pulsieren & Blinken) */
-    .typing-text {
-        opacity: 0.8;
-        animation: blinkText 1.5s infinite ease-in-out;
-    }
-
-    @keyframes blinkText {
-        0%, 100% { opacity: 0.6; transform: translateX(0); }
-        50% { opacity: 1; transform: translateX(2px); }
-    }
-
-    .dot {
-        width: 8px;
-        height: 8px;
-        background: var(--oe-red);
-        border-radius: 50%;
-        box-shadow: 0 0 10px var(--oe-red);
-        animation: pulseDot 1s infinite alternate;
-    }
-
-    @keyframes pulseDot {
-        from { transform: scale(1); opacity: 1; }
-        to { transform: scale(1.3); opacity: 0.4; }
-    }
-
-    /* 4. Prozent-Counter Effekt */
-    .percent-counter {
-        font-weight: 800;
-        color: var(--oe-red);
-        animation: countUp 2.5s forwards;
-    }
-
-    @keyframes countUp {
-        0% { opacity: 0.3; }
-        50% { opacity: 1; }
-        70% { opacity: 0.7; }
-        100% { opacity: 1; }
-    }
-</style>
+</body>
+</html>
