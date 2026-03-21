@@ -10,527 +10,328 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
 
 <style>
-:root{
---oe-red:#ed2939;
---bg-dark:#0a0a0a;
---bg-light:#f1f1f1;
---text-main:#f1f1f1;
---text-dark:#0a0a0a;
---card-bg:#1a1a1a;
---card-bg-light:#fff;
---nav-bg:rgba(10,10,10,.95);
---transition:all .5s cubic-bezier(.4,0,.2,1);
+:root {
+    --oe-red: #ed2939;
+    --bg-dark: #0a0a0a;
+    --bg-light: #f8f9fa;
+    --text-main: #f1f1f1;
+    --text-dark: #1a1a1a;
+    --card-bg: rgba(26, 26, 26, 0.9);
+    --card-bg-light: rgba(255, 255, 255, 0.9);
+    --nav-bg: rgba(10, 10, 10, 0.8);
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-*{margin:0;padding:0;box-sizing:border-box}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-body{
-background:var(--bg-dark);
-color:var(--text-main);
-font-family:'Inter',sans-serif;
-overflow-x:hidden;
-transition: background .5s, color .5s;
+body {
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    transition: background 0.5s, color 0.5s;
+    scroll-behavior: smooth;
+}
+
+/* Scroll Progress Bar */
+#scrollProgress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0%;
+    height: 4px;
+    background: var(--oe-red);
+    z-index: 20001;
 }
 
 /* LOADER */
-#loader{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:#000;
-z-index:20000;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
+#loader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: 20000; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
 }
-
-.loader-bar-container{
-width:200px;
-height:2px;
-background:#222;
-margin-top:20px;
-overflow:hidden;
-}
-
-.loader-bar{
-width:0%;
-height:100%;
-background:var(--oe-red);
-transition:.4s;
-}
+.loader-bar-container { width: 200px; height: 2px; background: #222; margin-top: 20px; overflow: hidden; }
+.loader-bar { width: 0%; height: 100%; background: var(--oe-red); transition: .4s; }
 
 /* NAV */
-nav{
-background:var(--nav-bg);
-padding:20px 5%;
-display:flex;
-justify-content:space-between;
-border-bottom:1px solid #222;
-transition: background .5s;
+nav {
+    background: var(--nav-bg);
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    z-index: 1000;
 }
+.logo { font-size: 1.5rem; font-weight: 800; }
+.logo span { color: var(--oe-red); }
 
-.logo{
-font-size:1.5rem;
-font-weight:800;
-}
-
-.logo span{color:var(--oe-red)}
-
-.section-container{
-max-width:1200px;
-margin:auto;
-padding:40px 5%;
-}
+.section-container { max-width: 1200px; margin: auto; padding: 40px 5%; }
 
 /* HEADER SLIDER */
-.header-slider{
-position:relative;
-height:300px;
-border-radius:20px;
-overflow:hidden;
-margin-bottom:60px;
+.header-slider {
+    position: relative; height: 400px; border-radius: 30px;
+    overflow: hidden; margin-bottom: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+.header-slider img {
+    position: absolute; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 1s ease-in-out;
 }
 
-.header-slider img{
-width:100%;
-height:100%;
-object-fit:cover;
-transition: transform .5s;
+/* SWIPER & CARDS */
+.swiper-slide {
+    background: var(--card-bg);
+    padding: 30px; border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    transition: var(--transition);
 }
+body.light .swiper-slide { background: var(--card-bg-light); color: var(--text-dark); border: 1px solid rgba(0,0,0,0.1); }
 
-.header-slider img:hover{
-transform: scale(1.05);
-}
-
-/* SWIPER CARDS */
-.swiper{
-padding:20px 0;
-}
-
-.swiper-slide{
-background:var(--card-bg);
-padding:30px;
-border-radius:20px;
-border:1px solid #222;
-text-align:center;
-transition: transform .3s;
-opacity:0;
-transform: translateY(50px);
-}
-
-.swiper-slide.fade-in{
-opacity:1;
-transform: translateY(0);
-}
-
-.swiper-slide:hover{
-transform: scale(1.05);
+/* FUN FACT BOX */
+.fact-box {
+    background: linear-gradient(135deg, var(--oe-red), #b01d29);
+    padding: 30px; border-radius: 20px; margin-bottom: 40px;
+    color: white; cursor: pointer; text-align: center;
 }
 
 /* MAP */
-.map-wrapper{
-background:#111;
-padding:20px;
-border-radius:20px;
-margin:40px 0;
-border:1px solid #222;
-position:relative;
-transition: height .5s, opacity .5s;
-}
+.map-wrapper { background: #111; padding: 15px; border-radius: 30px; margin: 40px 0; border: 1px solid #222; }
+#map { height: 500px; border-radius: 20px; z-index: 1; }
 
-#map{
-height:500px;
-border-radius:20px;
+/* MODALS */
+.modal {
+    display: none; position: fixed; z-index: 30000; left: 0; top: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.9);
+    align-items: center; justify-content: center; backdrop-filter: blur(5px);
 }
+.modal-content {
+    background: #111; padding: 40px; border-radius: 30px;
+    width: 90%; max-width: 600px; border: 1px solid var(--oe-red);
+}
+.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 15px; }
+.video-container iframe { position: absolute; top:0; left:0; width:100%; height:100%; }
 
-/* INFO TABS */
-.tabs{
-display:flex;
-margin-bottom:20px;
-gap:10px;
+/* BUTTONS */
+.btn {
+    background: transparent; color: inherit; border: 1px solid #444;
+    padding: 12px 24px; border-radius: 50px; cursor: pointer;
+    font-weight: 600; transition: var(--transition); margin: 5px;
 }
+.btn:hover { background: var(--oe-red); color: white; border-color: var(--oe-red); transform: translateY(-2px); }
 
-.tab-btn{
-padding:10px 20px;
-border-radius:50px;
-border:1px solid #444;
-cursor:pointer;
-background:transparent;
-color:white;
-font-weight:600;
-transition:all .3s;
-}
+/* STATS */
+.stats-bar { background: #000; padding: 60px 5%; display: flex; justify-content: space-around; flex-wrap: wrap; }
+.stat-item h2 { color: var(--oe-red); font-size: 3rem; margin-bottom: 10px; }
 
-.tab-btn.active{
-background:var(--oe-red);
-color:#fff;
-}
-
-.tab-content{
-display:none;
-padding:20px;
-background:var(--card-bg);
-border-radius:20px;
-border:1px solid #222;
-}
-
-/* INFO */
-.dynamic-info{
-background:var(--card-bg);
-padding:40px;
-border-radius:20px;
-border-left:4px solid var(--oe-red);
-margin-top:20px;
-opacity:0;
-transform: translateY(50px);
-transition: opacity .6s, transform .6s;
-}
-
-.dynamic-info.visible{
-opacity:1;
-transform: translateY(0);
-}
-
-.toggle-btn, .video-btn, #darkModeBtn{
-background:transparent;
-color:white;
-border:1px solid #444;
-padding:12px 24px;
-border-radius:50px;
-cursor:pointer;
-font-weight:600;
-margin-bottom:20px;
-transition: all .3s;
-}
-
-.toggle-btn:hover, .video-btn:hover, #darkModeBtn:hover{
-background:var(--oe-red);
-color:#fff;
-}
-
-.stats-bar{
-background:#000;
-padding:80px 5%;
-display:flex;
-justify-content:space-around;
-flex-wrap:wrap;
-text-align:center;
-}
-
-.stat-item h2{
-color:var(--oe-red);
-font-size:3rem;
-}
-
-footer{
-padding:50px;
-text-align:center;
-border-top:1px solid #222;
-opacity:.5;
-transition: opacity .5s;
-}
-
-/* MODAL */
-.modal{
-display:none;
-position:fixed;
-z-index:20000;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.9);
-align-items:center;
-justify-content:center;
-}
-
-.modal-content{
-background:#111;
-padding:40px;
-border-radius:30px;
-width:90%;
-max-width:500px;
-border:1px solid var(--oe-red);
-transition: all .3s;
-}
-
-/* Dark Mode */
-body.light{
-background:var(--bg-light);
-color:var(--text-dark);
-}
-
-body.light .swiper-slide, body.light .tab-content, body.light .dynamic-info{
-background:var(--card-bg-light);
-color:var(--text-dark);
-}
-
-body.light nav{
-background:#eee;
-color:#000;
-}
+body.light { background: var(--bg-light); color: var(--text-dark); }
+body.light nav { background: rgba(255,255,255,0.8); border-bottom: 1px solid #ddd; }
 </style>
 </head>
 
 <body>
 
+<div id="scrollProgress"></div>
+
 <div id="loader">
-<div style="font-weight:800;font-size:1.5rem;letter-spacing:5px;">A U S T R I A</div>
-<div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
+    <div style="font-weight:800;font-size:1.5rem;letter-spacing:5px;">A U S T R I A</div>
+    <div class="loader-bar-container"><div class="loader-bar" id="l-bar"></div></div>
 </div>
 
 <div id="main-content" style="display:none">
 
 <nav>
-<div class="logo">ÖSTERREICH<span>.hub</span></div>
-<div style="display:flex; gap:15px; align-items:center">
-<div style="font-size:.7rem;color:var(--oe-red);font-weight:800;">2026</div>
-<button id="darkModeBtn">Dark / Light</button>
-</div>
+    <div class="logo">ÖSTERREICH<span>.hub</span></div>
+    <div>
+        <button class="btn" id="darkModeBtn">🌓 Modus</button>
+    </div>
 </nav>
 
 <div class="section-container">
+    
+    <header class="header-slider" id="slider">
+        <img src="https://images.unsplash.com/photo-1520114878144-6123749968dd?auto=format&fit=crop&w=1200" style="opacity:1">
+        <img src="https://images.unsplash.com/photo-1516550893923-42d28e5677af?auto=format&fit=crop&w=1200">
+        <img src="https://images.unsplash.com/photo-1590059392523-6447990f3df9?auto=format&fit=crop&w=1200">
+    </header>
 
-<header class="header-slider">
-<img src="https://source.unsplash.com/1600x300/?alps" alt="Alpen">
-<img src="https://source.unsplash.com/1600x300/?vienna" alt="Städte">
-<img src="https://source.unsplash.com/1600x300/?culture" alt="Kultur">
-</header>
+    <div class="fact-box" onclick="newFact()">
+        <small>Wusstest du schon? (Klicken für neuen Fact)</small>
+        <h3 id="fact-text">Österreich hat die älteste Tageszeitung der Welt.</h3>
+    </div>
 
-<!-- SWIPER CARDS -->
-<div class="swiper mySwiper">
-<div class="swiper-wrapper">
-  <div class="swiper-slide">
-    <h3>Geographie</h3>
-    <p>Rund 62 % Österreichs sind Alpenregion. Höchster Berg: Großglockner (3798 m).</p>
-  </div>
-  <div class="swiper-slide">
-    <h3>Bevölkerung</h3>
-    <p>Etwa 9,1 Millionen Einwohner leben in Österreich, davon über 2 Millionen im Großraum Wien.</p>
-  </div>
-  <div class="swiper-slide">
-    <h3>Kultur</h3>
-    <p>Komponisten wie Mozart, Haydn und Strauss machten Österreich weltberühmt.</p>
-  </div>
-</div>
-<div class="swiper-button-next" style="color:var(--oe-red)"></div>
-<div class="swiper-button-prev" style="color:var(--oe-red)"></div>
-</div>
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide"><h3>🏔️ Geographie</h3><p>62% des Landes bestehen aus Alpen. Der Großglockner tront mit 3.798m über allem.</p></div>
+            <div class="swiper-slide"><h3>👥 Bevölkerung</h3><p>9,1 Mio. Menschen nennen Österreich ihr Zuhause. Wien ist die zweitgrößte deutschsprachige Stadt.</p></div>
+            <div class="swiper-slide"><h3>🎼 Kultur</h3><p>Von Mozart bis Falco – Österreich ist das Land der Musik und der Hochkultur.</p></div>
+        </div>
+    </div>
 
-<button class="video-btn" onclick="openVideo()">Bundesländer Video ansehen</button>
-<button class="toggle-btn" id="toggleMapBtn" onclick="toggleMap()">Karte einklappen</button>
+    <div style="text-align: center; margin: 40px 0;">
+        <button class="btn" onclick="openVideoModal()">🎬 Video-Tour starten</button>
+        <button class="btn" id="toggleMapBtn" onclick="toggleMap()">🗺️ Karte umschalten</button>
+    </div>
 
-<div id="mapWrapper" class="map-wrapper">
-<h2 style="margin-bottom:30px">Interaktive Karte Österreich</h2>
-<div id="map"></div>
-</div>
-
-<!-- Tabs -->
-<div class="tabs">
-<button class="tab-btn active" data-tab="nature">Natur</button>
-<button class="tab-btn" data-tab="culture">Kultur</button>
-<button class="tab-btn" data-tab="events">Events</button>
-</div>
-<div id="nature" class="tab-content" style="display:block">
-<p>Alpenlandschaften, Seen, Nationalparks, Wanderungen.</p>
-</div>
-<div id="culture" class="tab-content">
-<p>Musik, Theater, historische Städte, Museen.</p>
-</div>
-<div id="events" class="tab-content">
-<p>Feste, Sportveranstaltungen, lokale Märkte.</p>
-</div>
-
-<div id="infoSection" class="dynamic-info">
-<div id="infoTarget">
-<h2>Österreich entdecken</h2>
-<p>Österreich besteht aus neun Bundesländern und ist bekannt für seine Alpenlandschaft, historische Städte und hohe Lebensqualität.</p>
-</div>
-</div>
+    <div id="mapWrapper" class="map-wrapper">
+        <div id="map"></div>
+    </div>
 
 </div>
 
 <section class="stats-bar">
-<div class="stat-item"><h2 id="c1">0</h2><p>Einwohner 👤</p></div>
-<div class="stat-item"><h2 id="c2">0</h2><p>Bundesländer 🏔️</p></div>
-<div class="stat-item"><h2 id="c3">0</h2><p>UNESCO 📜</p></div>
+    <div class="stat-item"><h2 id="c1">0</h2><p>Einwohner</p></div>
+    <div class="stat-item"><h2 id="c2">0</h2><p>Bundesländer</p></div>
+    <div class="stat-item"><h2 id="c3">0</h2><p>Welterbestätten</p></div>
 </section>
 
-<footer>Community Projekt Österreich 2026</footer>
-
+<footer>© 2026 Österreich Community Info-Portal</footer>
 </div>
 
 <div id="infoModal" class="modal">
-<div class="modal-content">
-<h2 id="modalTitle"></h2>
-<p id="modalBody"></p>
-<button class="toggle-btn" onclick="closeModal()">Schließen</button>
+    <div class="modal-content">
+        <h2 id="modalTitle" style="color:var(--oe-red); margin-bottom:15px;"></h2>
+        <p id="modalBody" style="line-height:1.6; margin-bottom:25px;"></p>
+        <button class="btn" onclick="closeModal()">Schließen</button>
+    </div>
 </div>
+
+<div id="videoModal" class="modal">
+    <div class="modal-content" style="max-width:800px;">
+        <div class="video-container">
+            <iframe id="ytPlayer" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <button class="btn" style="margin-top:20px;" onclick="closeVideoModal()">Schließen</button>
+    </div>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
 <script>
-let mapIsVisible = true;
-
-const bundeslaender = [
-    {name: "Wien", coords: [48.2082, 16.3738], info: "Bundeshauptstadt, Kultur & Politikzentrum"},
-    {name: "Steiermark", coords: [47.0707, 15.4395], info: "Grünes Herz Österreichs • Graz"},
-    {name: "Salzburg", coords: [47.8095, 13.0550], info: "Geburtsort Mozarts • UNESCO Altstadt"},
-    {name: "Tirol", coords: [47.2692, 11.4041], info: "Alpenregion • Wintersportzentrum"},
-    {name: "Vorarlberg", coords: [47.2500, 9.7500], info: "Bodensee • Hauptstadt Bregenz"},
-    {name: "Oberösterreich", coords: [48.3069, 14.2858], info: "Industriezentrum Linz"},
-    {name: "Niederösterreich", coords: [48.3069, 15.3795], info: "Größtes Bundesland Österreichs"},
-    {name: "Kärnten", coords: [46.6243, 14.3050], info: "Seenlandschaft • Wörthersee"},
-    {name: "Burgenland", coords: [47.4365, 16.5197], info: "Weinregion • Neusiedler See"}
+const facts = [
+    "Österreich ist das einzige EU-Land, das kein NATO-Mitglied ist.",
+    "Die Schreibmaschine wurde in Österreich (Tirol) erfunden.",
+    "Der Tiergarten Schönbrunn ist der älteste noch bestehende Zoo der Welt.",
+    "Österreich hat die höchste Dichte an Bio-Bauernhöfen in der EU.",
+    "Der Name 'Österreich' (Ostarrîchi) wurde erstmals 996 urkundlich erwähnt."
 ];
 
+const bundeslaender = [
+    {name: "Wien", coords: [48.2082, 16.3738], info: "Bundeshauptstadt. Highlight: Schloss Schönbrunn & der Stephansdom. Kulturelles Herz Europas."},
+    {name: "Steiermark", coords: [47.0707, 15.4395], info: "Das grüne Herz. Bekannt für Weinbau, den Grazer Schlossberg und den Dachstein Gletscher."},
+    {name: "Salzburg", coords: [47.8095, 13.0550], info: "Mozartstadt. UNESCO-Welterbe Altstadt, Krimmler Wasserfälle und die Festung Hohensalzburg."},
+    {name: "Tirol", coords: [47.2692, 11.4041], info: "Alpin-Zentrum. Innsbruck mit dem Goldenen Dachl und weltbekannte Skigebiete wie Kitzbühel."},
+    {name: "Vorarlberg", coords: [47.5000, 9.7500], info: "Zwischen Bodensee und Alpen. Highlight: Die Bregenzer Festspiele auf der Seebühne."},
+    {name: "Oberösterreich", coords: [48.3069, 14.2858], info: "Land der Seen (Hallstatt) und Industrie (Linz). Das Salzkammergut bietet atemberaubende Natur."},
+    {name: "Niederösterreich", coords: [48.3069, 15.6000], info: "Größtes Bundesland. Bekannt für das Stift Melk, die Wachau und hervorragende Weine."},
+    {name: "Kärnten", coords: [46.6243, 14.3050], info: "Land der 1200 Seen. Der Wörthersee ist Treffpunkt für Erholung und Lifestyle."},
+    {name: "Burgenland", coords: [47.8400, 16.5200], info: "Pannonisches Klima. Der Neusiedler See ist ein Paradies für Segler und Vogelbeobachter."}
+];
+
+// Initialize Everything
 window.onload = () => {
     let bar = document.getElementById("l-bar");
     let w = 0;
     let int = setInterval(() => {
-        w += 10;
-        bar.style.width = w + "%";
+        w += 10; bar.style.width = w + "%";
         if (w >= 100) {
             clearInterval(int);
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-            animateValue("c1",0,9100000,2000);
-            animateValue("c2",0,9,2000);
-            animateValue("c3",0,12,2000);
-            initMap();
-            initSwiper();
-            initHeaderSlider();
-            fadeInOnScroll();
+            document.getElementById("loader").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("main-content").style.display = "block";
+                initApp();
+            }, 500);
         }
-    },100);
+    }, 50);
 }
 
-function toggleMap(){
-    mapIsVisible = !mapIsVisible;
-    let wrapper = document.getElementById("mapWrapper");
-    let btn = document.getElementById("toggleMapBtn");
-    if(!mapIsVisible){
-        wrapper.style.opacity = 0;
-        setTimeout(()=>wrapper.style.display="none",500);
-        btn.innerText="Karte aufklappen";
-    }else{
-        wrapper.style.display="block";
-        setTimeout(()=>wrapper.style.opacity=1,10);
-        btn.innerText="Karte einklappen";
-    }
+function initApp() {
+    animateValue("c1", 0, 9100000, 2000);
+    animateValue("c2", 0, 9, 2000);
+    animateValue("c3", 0, 12, 2000);
+    initMap();
+    initSwiper();
+    initSlider();
+    
+    window.onscroll = () => {
+        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        document.getElementById("scrollProgress").style.width = (winScroll / height) * 100 + "%";
+    };
 }
 
-function showInfo(name){
-    const info = bundeslaender.find(bl => bl.name === name)?.info || "";
-    document.getElementById("modalTitle").innerText = name;
-    document.getElementById("modalBody").innerText = info;
-    document.getElementById("infoModal").style.display = "flex";
+function newFact() {
+    const text = facts[Math.floor(Math.random() * facts.length)];
+    document.getElementById("fact-text").innerText = text;
 }
 
-function closeModal(){
-    document.getElementById("infoModal").style.display = "none";
+function initSlider() {
+    const imgs = document.querySelectorAll("#slider img");
+    let i = 0;
+    setInterval(() => {
+        imgs.forEach(img => img.style.opacity = "0");
+        i = (i + 1) % imgs.length;
+        imgs[i].style.opacity = "1";
+    }, 5000);
 }
 
-function animateValue(id,start,end,duration){
+function initMap() {
+    const map = L.map('map').setView([47.5162, 14.5501], 7);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    
+    bundeslaender.forEach(bl => {
+        L.marker(bl.coords).addTo(map)
+            .on('click', () => {
+                document.getElementById("modalTitle").innerText = bl.name;
+                document.getElementById("modalBody").innerText = bl.info;
+                document.getElementById("infoModal").style.display = "flex";
+            });
+    });
+}
+
+function initSwiper() {
+    new Swiper(".mySwiper", {
+        slidesPerView: 1, spaceBetween: 20, loop: true,
+        breakpoints: { 768: { slidesPerView: 3 } }
+    });
+}
+
+function animateValue(id, start, end, duration) {
     const obj = document.getElementById(id);
     let startTimestamp = null;
     const step = (timestamp) => {
-        if(!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp-startTimestamp)/duration,1);
-        obj.innerHTML = Math.floor(progress*(end-start)+start).toLocaleString("de-AT");
-        if(progress < 1) window.requestAnimationFrame(step);
-    }
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString("de-AT");
+        if (progress < 1) window.requestAnimationFrame(step);
+    };
     window.requestAnimationFrame(step);
 }
 
-// Leaflet Map initialisieren
-function initMap(){
-    const map = L.map('map').setView([47.5162, 14.5501], 7);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    bundeslaender.forEach(bl => {
-        const marker = L.marker(bl.coords).addTo(map)
-        .bindPopup(`<b>${bl.name}</b><br>${bl.info}`);
-        marker.on('mouseover', ()=>marker.openPopup());
-        marker.on('mouseout', ()=>marker.closePopup());
-        marker.on('click', ()=>showInfo(bl.name));
-    });
-
-    const bounds = [[46.3, 9.5],[49.0,17.2]];
-    map.setMaxBounds(bounds);
-    map.on('drag', () => { map.panInsideBounds(bounds, {animate:false}); });
+function toggleMap() {
+    const wrap = document.getElementById("mapWrapper");
+    wrap.style.display = wrap.style.display === "none" ? "block" : "none";
 }
 
-// Swiper initialisieren
-function initSwiper(){
-    new Swiper(".mySwiper", {
-        slidesPerView: 1,
-        spaceBetween: 20,
-        loop: true,
-        navigation: {
-            nextEl: ".swiper-button-next",
-            prevEl: ".swiper-button-prev",
-        },
-        breakpoints:{
-            600:{slidesPerView:2},
-            900:{slidesPerView:3}
-        }
-    });
+function openVideoModal() {
+    document.getElementById("ytPlayer").src = "https://www.youtube.com/embed/Zn1S3RtGpWs?autoplay=1";
+    document.getElementById("videoModal").style.display = "flex";
 }
 
-// Header Slider
-function initHeaderSlider(){
-    const imgs = document.querySelectorAll(".header-slider img");
-    let index=0;
-    setInterval(()=>{
-        imgs.forEach((img,i)=>img.style.opacity=(i===index?1:0));
-        index=(index+1)%imgs.length;
-    },4000);
+function closeVideoModal() {
+    document.getElementById("ytPlayer").src = "";
+    document.getElementById("videoModal").style.display = "none";
 }
 
-// Dark / Light Mode
-document.getElementById("darkModeBtn").onclick = ()=>{
-    document.body.classList.toggle("light");
-}
+function closeModal() { document.getElementById("infoModal").style.display = "none"; }
 
-// Tabs
-document.querySelectorAll(".tab-btn").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        const tab = btn.getAttribute("data-tab");
-        document.querySelectorAll(".tab-content").forEach(tc=>tc.style.display="none");
-        document.getElementById(tab).style.display="block";
-    })
-});
-
-// Scroll Fade-In
-function fadeInOnScroll(){
-    const faders = document.querySelectorAll(".swiper-slide, .dynamic-info");
-    const observer = new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>{
-            if(entry.isIntersecting){
-                entry.target.classList.add("fade-in");
-                entry.target.classList.add("visible");
-                observer.unobserve(entry.target);
-            }
-        });
-    }, {threshold:0.2});
-    faders.forEach(f=>observer.observe(f));
-}
-
-// Video Button
-function openVideo(){
-    window.open("https://www.youtube.com/watch?v=Zn1S3RtGpWs&t=21s","_blank");
-}
+document.getElementById("darkModeBtn").onclick = () => document.body.classList.toggle("light");
 </script>
 
 </body>
